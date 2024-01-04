@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Model.h"
 #include "WorldTransform.h"
+#include "ViewProjection.h"
+#include <XInput.h>
 
 class Player {
 public:
@@ -10,7 +12,19 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
+	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
+
+	void SetViewProjection(const ViewProjection* viewProjection) {
+		viewProjection_ = viewProjection;
+	}
+
 private:
+	// ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
+
+	// カメラのビュープロジェクション
+	const ViewProjection* viewProjection_ = nullptr;
+
 	// ワールド変換データ
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;

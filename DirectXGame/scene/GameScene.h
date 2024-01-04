@@ -9,6 +9,8 @@
 #include "WorldTransform.h"
 #include "Player.h"
 #include <memory>
+#include <DebugCamera.h>
+#include "FollowCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,6 +53,13 @@ private: // メンバ変数
 
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	// デバッグカメラ
+	std::unique_ptr<DebugCamera> debugCamera_;
+	// デバッグカメラ有効
+	bool isDebugCameraActive_ = false;
+	// 追従カメラ
+	std::unique_ptr<FollowCamera> followCamera_;
 
 	// 自キャラ
 	std::unique_ptr<Player> player_;
