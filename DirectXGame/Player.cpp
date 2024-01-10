@@ -60,6 +60,24 @@ void Player::Update() {
 	worldTransformBody2_.UpdateMatrix();
 	worldTransformBody3_.UpdateMatrix();
 
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
+	// キャラクターの攻撃処理
+	Attack();
+
+	// 弾更新
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
+	}
+
+
 	ImGui::Begin("window");
 	ImGui::DragFloat3("player position", &worldTransformHead_.translation_.x);
 	ImGui::End();
@@ -72,4 +90,15 @@ void Player::Draw(ViewProjection& viewProjection) {
 	body1Model_->Draw(worldTransformBody1_, viewProjection);
 	body2Model_->Draw(worldTransformBody2_, viewProjection);
 	body3Model_->Draw(worldTransformBody3_, viewProjection);
+
+	 for (PlayerBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
+	}
+
 }
+
+void Player::Attack() {
+	
+}
+
+

@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "PlayerBullet.h"
 #include <XInput.h>
 
 class Player {
@@ -12,11 +13,15 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
+	void Attack();
+
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 
 private:
 	// ゲームパッドの状態を得る変数
@@ -35,4 +40,7 @@ private:
 	Model* body1Model_ = nullptr;
 	Model* body2Model_ = nullptr;
 	Model* body3Model_ = nullptr;
+
+	std::list<PlayerBullet*> bullets_;
+
 };

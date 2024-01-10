@@ -251,3 +251,9 @@ Vector3 Normalize(const Vector3 v1) {
 
 	return num;
 }
+
+void Move(Vector3& transform, Vector3& move) {
+	transform.x += move.x;
+	transform.y += move.y;
+	transform.z += move.z;
+}
