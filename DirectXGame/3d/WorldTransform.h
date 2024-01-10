@@ -47,8 +47,6 @@ public:
 	/// </summary>
 	void TransferMatrix();
 
-	void UpdateMatrix();
-
 	/// <summary>
 	/// 定数バッファの取得
 	/// </summary>

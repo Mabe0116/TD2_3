@@ -89,12 +89,6 @@ private: // メンバ変数
 
 	Model* modelGround_ = nullptr;
 
-	// 3Dモデルデータ
-	std::unique_ptr<Model> model_;
-
-	// ビュープロジェクション
-	ViewProjection viewProjection_;
-
 	// デバッグカメラ
 	std::unique_ptr<DebugCamera> debugCamera_;
 	// デバッグカメラ有効
