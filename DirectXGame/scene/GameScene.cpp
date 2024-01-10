@@ -11,9 +11,31 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	// 3Dモデルデータの生成
+	model_.reset(Model::Create());
+
+	// ビュープロジェクションの初期化
+	viewProjection_.Initialize();
+
+	// 自キャラの生成
+	player_ = std::make_unique<Player>();
+	// 3Dモデルの生成
+	modelPlayerHead_.reset(Model::CreateFromOBJ("player_Head", true));
+	modelPlayerBody1_.reset(Model::CreateFromOBJ("player_Body1", true));
+	modelPlayerBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
+	modelPlayerBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
+
+	// 自キャラの初期化
+	player_->Initialize(
+	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
+		modelPlayerBody2_.get(),modelPlayerBody3_.get());
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+	// 自キャラの更新
+	player_->Update();
+}
 
 void GameScene::Draw() {
 
@@ -41,6 +63,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
+	// 自キャラの描画
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
