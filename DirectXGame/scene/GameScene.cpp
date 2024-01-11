@@ -135,7 +135,6 @@ void GameScene::Update() {
 			isDebugCameraActive_ = true;
 		}
 #endif
-
 		// カメラの処理
 		if (isDebugCameraActive_) {
 			debugCamera_->Update();

@@ -83,8 +83,8 @@ private: // メンバ変数
 
 	Model* modelGround_ = nullptr;
 
-	private:
 
+	private:
 	//シーン切り替え
 	enum Scene {
 		TITLE,
@@ -108,6 +108,7 @@ private: // メンバ変数
 	//ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 	XINPUT_STATE prevjoyState;
+
 
 
 	/// <summary>
