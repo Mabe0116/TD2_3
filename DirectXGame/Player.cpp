@@ -14,10 +14,15 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 	assert(body3);
 	body3Model_ = body3;
 
-	worldTransformHead_.translation_ = {0, 0, 0};
-	worldTransformBody1_.translation_ = {0, 0, 0};
-	worldTransformBody2_.translation_ = {0, 0, 0};
-	worldTransformBody3_.translation_ = {0, 0, 0};
+	worldTransformHead_.translation_ = {0, 1.0f, 0};
+	worldTransformBody1_.translation_ = {0, 1.0f, 0};
+	worldTransformBody2_.translation_ = {0, 1.0f, 0};
+	worldTransformBody3_.translation_ = {0, 1.0f, 0};
+
+	worldTransformHead_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody1_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody2_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody3_.scale_ = {0.5f, 0.5f, 0.5f};
 
 	worldTransformHead_.Initialize();
 	worldTransformBody1_.Initialize();
@@ -61,7 +66,10 @@ void Player::Update() {
 	worldTransformBody3_.UpdateMatrix();
 
 	ImGui::Begin("window");
-	ImGui::DragFloat3("player position", &worldTransformHead_.translation_.x);
+	ImGui::DragFloat3("player head", &worldTransformHead_.translation_.x);
+	ImGui::DragFloat3("player body1", &worldTransformBody1_.translation_.x);
+	ImGui::DragFloat3("player body2", &worldTransformBody2_.translation_.x);
+	ImGui::DragFloat3("player body3", &worldTransformBody3_.translation_.x);
 	ImGui::End();
 
 }
