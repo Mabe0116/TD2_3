@@ -35,6 +35,21 @@ void GameScene::Initialize() {
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
 
 
+	//サウンド読み込み
+	TitleSound_ = audio_->LoadWave("mokugyo.wav");
+	OperationSound_ = audio_->LoadWave("fanfare.wav");
+	//ClearSound_ = audio_->LoadWave("");
+
+	//音声再生
+	/*audio_->PlayWave(TitleSound_);
+	audio_->PlayWave(OperationSound_);*/
+
+		Operationvoice_ = audio_->PlayWave(OperationSound_, false);
+	
+
+
+
+
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	modelGround_ = Model::CreateFromOBJ("ground", true);
@@ -100,22 +115,30 @@ void GameScene::Update() {
 	switch (scene) {
 
 	case GameScene::TITLE: // タイトルシーン
+		Titlevoice_ = audio_->PlayWave(TitleSound_, true);
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
 					scene = OPERATION;
+					if (scene == OPERATION) {
+						Titlevoice_ = audio_->PlayWave(TitleSound_, false);
+					}
 				}
 			}
 		}
 		break;
 
 	case GameScene::OPERATION: // 操作説明
+		Operationvoice_ = audio_->PlayWave(OperationSound_, true);
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
 					scene = GAME;
+					if (scene == GAME) {
+						Operationvoice_ = audio_->PlayWave(OperationSound_, false);
+					}
 				}
 			}
 		}
@@ -151,10 +174,6 @@ void GameScene::Update() {
 		};
 		break;
 	}
-
-
-
-
 }
 
 void GameScene::Draw() {
