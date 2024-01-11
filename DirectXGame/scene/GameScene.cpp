@@ -1,7 +1,7 @@
 #include "GameScene.h"
+#include "AxisIndicator.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
@@ -29,8 +29,20 @@ void GameScene::Initialize() {
 
 	// 自キャラの初期化
 	player_->Initialize(
-	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
-		modelPlayerBody2_.get(),modelPlayerBody3_.get());
+	    modelPlayerHead_.get(), modelPlayerBody1_.get(), modelPlayerBody2_.get(),
+	    modelPlayerBody3_.get());
+
+	// 敵キャラの生成
+	enemy_ = std::make_unique<Enemy>();
+	// 3Dモデルの生成
+	modelEnemyHead_.reset(Model::CreateFromOBJ("player_Head", true));
+	modelEnemyBody1_.reset(Model::CreateFromOBJ("player_Body1", true));
+	modelEnemyBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
+	modelEnemyBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
+	// 敵キャラの初期化
+	enemy_->Initialize(
+	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
+	    modelEnemyBody3_.get());
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -53,6 +65,9 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
+
+	// 敵キャラの更新
+	enemy_->Update();
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
@@ -108,6 +123,7 @@ void GameScene::Draw() {
 
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

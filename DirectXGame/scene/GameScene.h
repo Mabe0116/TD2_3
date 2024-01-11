@@ -2,15 +2,16 @@
 
 #include "Audio.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
+#include "FollowCamera.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
-#include <memory>
 #include <DebugCamera.h>
-#include "FollowCamera.h"
+#include <memory>
 
 /// <summary>
 /// ゲームシーン
@@ -68,6 +69,14 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelPlayerBody1_;
 	std::unique_ptr<Model> modelPlayerBody2_;
 	std::unique_ptr<Model> modelPlayerBody3_;
+
+	// 敵キャラ
+	std::unique_ptr<Enemy> enemy_;
+	// 3Dモデル
+	std::unique_ptr<Model> modelEnemyHead_;
+	std::unique_ptr<Model> modelEnemyBody1_;
+	std::unique_ptr<Model> modelEnemyBody2_;
+	std::unique_ptr<Model> modelEnemyBody3_;
 
 	/// <summary>
 	/// ゲームシーン用
