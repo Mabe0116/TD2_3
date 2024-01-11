@@ -2,15 +2,17 @@
 
 #include "Audio.h"
 #include "DirectXCommon.h"
+#include "FollowCamera.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
-#include <memory>
 #include <DebugCamera.h>
-#include "FollowCamera.h"
+#include <memory>
+#include "Skydome.h"
+#include "Ground.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,6 +53,10 @@ private: // メンバ変数
 	// 3Dモデルデータ
 	std::unique_ptr<Model> model_;
 
+	
+	// ワールドトランスフォーム
+	WorldTransform worldTransform_;
+
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 
@@ -68,6 +74,14 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelPlayerBody1_;
 	std::unique_ptr<Model> modelPlayerBody2_;
 	std::unique_ptr<Model> modelPlayerBody3_;
+
+	Skydome* skydome_ = nullptr;
+
+	Model* modelSkydome_ = nullptr;
+
+	Ground* ground_ = nullptr;
+
+	Model* modelGround_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
