@@ -22,6 +22,19 @@ void GameScene::Initialize() {
 	// 3Dモデルデータの生成
 	model_.reset(Model::Create());
 
+	TitleTexture_ = TextureManager::Load("scene/title.png");
+	OperationTexture_ = TextureManager::Load("scene/operation.png");
+	ClearTexture_ = TextureManager::Load("scene/clear.png");
+
+	TitleSprite_ = std::make_unique<Sprite>();
+	OperationSprite_ = std::make_unique<Sprite>();
+	ClearSprite_ = std::make_unique<Sprite>();
+
+	TitleSprite_.reset(Sprite::Create(TitleTexture_, {0, 0}));
+	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
+	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
+
+
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	modelGround_ = Model::CreateFromOBJ("ground", true);
@@ -78,37 +91,70 @@ void GameScene::Initialize() {
 	skydome_->Initialize(modelSkydome_);
 
 	ground_->Initialize(modelGround_);
+
+
 }
 
 void GameScene::Update() {
-	// 自キャラの更新
-	player_->Update();
 
-	skydome_->Update();
+	switch (scene) {
 
-	// デバッグカメラの更新
-	debugCamera_->Update();
+	case GameScene::TITLE: // タイトルシーン
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = OPERATION;
+				}
+			}
+		}
+		break;
+
+	case GameScene::OPERATION: // 操作説明
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = GAME;
+				}
+			}
+		}
+		break;
+	case GameScene::GAME:
+
+		// 自キャラの更新
+		player_->Update();
+
+		skydome_->Update();
+
+		// デバッグカメラの更新
+		debugCamera_->Update();
 
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN)) {
-		isDebugCameraActive_ = true;
-	}
+		if (input_->TriggerKey(DIK_RETURN)) {
+			isDebugCameraActive_ = true;
+		}
 #endif
 
-	// カメラの処理
-	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		// ビュープロジェクション行列の転送
-		viewProjection_.TransferMatrix();
-	} else if (isDebugCameraActive_ == false) {
-		// 追従カメラの更新
-		followCamera_->Update();
-		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
-		viewProjection_.matView = followCamera_->GetViewProjection().matView;
-		viewProjection_.TransferMatrix();
-	};
+		// カメラの処理
+		if (isDebugCameraActive_) {
+			debugCamera_->Update();
+			viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+			viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+			// ビュープロジェクション行列の転送
+			viewProjection_.TransferMatrix();
+		} else if (isDebugCameraActive_ == false) {
+			// 追従カメラの更新
+			followCamera_->Update();
+			viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+			viewProjection_.matView = followCamera_->GetViewProjection().matView;
+			viewProjection_.TransferMatrix();
+		};
+		break;
+	}
+
+
+
 
 }
 
@@ -125,6 +171,18 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
+
+	if (scene == TITLE) {
+		TitleSprite_->Draw();
+	}
+	if (scene == OPERATION) {
+		OperationSprite_->Draw();
+	}
+	if (scene == CLEAR) {
+		ClearSprite_->Draw();
+	}
+
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -135,17 +193,19 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	skydome_->Draw(viewProjection_);
+	if (scene == GAME) {
 
-	ground_->Draw(viewProjection_);
+		skydome_->Draw(viewProjection_);
 
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
+		ground_->Draw(viewProjection_);
 
-	// 自キャラの描画
-	player_->Draw(viewProjection_);
+		/// <summary>
+		/// ここに3Dオブジェクトの描画処理を追加できる
+		/// </summary>
 
+		// 自キャラの描画
+		player_->Draw(viewProjection_);
+	}
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion

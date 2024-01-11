@@ -83,6 +83,33 @@ private: // メンバ変数
 
 	Model* modelGround_ = nullptr;
 
+	private:
+
+	//シーン切り替え
+	enum Scene {
+		TITLE,
+		OPERATION,
+		GAME,
+		CLEAR
+	};
+
+	Scene scene = TITLE;
+
+	//テクスチャハンドル
+	uint32_t TitleTexture_ = 0;
+	uint32_t OperationTexture_ = 0;
+	uint32_t ClearTexture_ = 0;
+
+	//シーン画面のスプライト
+	std::unique_ptr<Sprite> TitleSprite_ = nullptr;
+	std::unique_ptr<Sprite> OperationSprite_ = nullptr;
+	std::unique_ptr<Sprite> ClearSprite_ = nullptr;
+
+	//ゲームパッドの状態を得る変数
+	XINPUT_STATE joyState;
+	XINPUT_STATE prevjoyState;
+
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
