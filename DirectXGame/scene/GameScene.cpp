@@ -1,7 +1,8 @@
 #include "GameScene.h"
-#include "TextureManager.h"
-#include <cassert>
 #include "AxisIndicator.h"
+#include "TextureManager.h"
+#include <ImGuiManager.h>
+#include <cassert>
 
 GameScene::GameScene() {}
 
@@ -25,9 +26,14 @@ void GameScene::Initialize() {
 
 	modelGround_ = Model::CreateFromOBJ("ground", true);
 
-
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
+
+	viewProjection_.translation_ = {
+	    0.0f,
+	    1.0f,
+	    0.0f,
+	};
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -44,8 +50,8 @@ void GameScene::Initialize() {
 
 	// 自キャラの初期化
 	player_->Initialize(
-	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
-		modelPlayerBody2_.get(),modelPlayerBody3_.get());
+	    modelPlayerHead_.get(), modelPlayerBody1_.get(), modelPlayerBody2_.get(),
+	    modelPlayerBody3_.get());
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -129,10 +135,9 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	// skydome描画
-	skydome_->Draw(debugCamera_->GetViewProjection());
+	skydome_->Draw(viewProjection_);
 
-	ground_->Draw(debugCamera_->GetViewProjection());
+	ground_->Draw(viewProjection_);
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
