@@ -2,6 +2,8 @@
 #include <Mymath.h>
 #include <cassert>
 
+Enemy::~Enemy() {}
+
 void Enemy::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 	assert(head);
 	headModel_ = head;
@@ -36,6 +38,23 @@ void Enemy::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 }
 
 void Enemy::Update() {
+
+	switch (phase_) {
+	case Phase::First:
+			break;
+	case Phase::Second:
+		    SecondAttack();
+		    break;
+	case Phase::Third:
+		    ThirdAttack();
+		    break;
+	case Phase::Final:
+		    SecondAttack(); 
+			ThirdAttack();
+		break;
+	}
+
+
 	worldTransform_.UpdateMatrix();
 	worldTransformHead_.UpdateMatrix();
 	worldTransformBody1_.UpdateMatrix();
@@ -45,11 +64,24 @@ void Enemy::Update() {
 
 void Enemy::Draw(ViewProjection& viewProjection) {
 	// 3Dモデル描画
-	headModel_->Draw(worldTransformHead_, viewProjection);
-	bodyModel1_->Draw(worldTransformBody1_, viewProjection);
-	bodyModel2_->Draw(worldTransformBody2_, viewProjection);
-	bodyModel3_->Draw(worldTransformBody3_, viewProjection);
+	if (phase_ == Phase::First || phase_ == Phase::Second || phase_ == Phase::Third ||
+	    phase_ == Phase::Final) {
+	  headModel_->Draw(worldTransformHead_, viewProjection);
+	 }
+	if (phase_ == Phase::First || phase_ == Phase::Second||phase_ == Phase::Third) {
+ 	    bodyModel3_->Draw(worldTransformBody3_, viewProjection);
+     }
+	 if (phase_ == Phase::First || phase_ == Phase::Second) {
+	  bodyModel2_->Draw(worldTransformBody2_, viewProjection);
+	 }
+	 if (phase_ == Phase::First) {
+	 	    bodyModel1_->Draw(worldTransformBody1_, viewProjection);
+	 }
 }
+
+void Enemy::SecondAttack() {}
+
+void Enemy::ThirdAttack() {}
 
 // 親子関係を結ぶ
 void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
