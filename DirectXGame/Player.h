@@ -7,7 +7,7 @@
 
 class Player {
 public:
-	void Initialize(Model* head, Model* body1, Model* body2, Model* body3);
+	void Initialize(Model* head, Model* body1, Model* body2, Model* body3,Model* PlayerBullet);
 
 	void Update();
 
@@ -26,10 +26,6 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
-
-	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
-
-	~Player();
 
 private:
 	// ゲームパッドの状態を得る変数

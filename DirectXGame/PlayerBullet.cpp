@@ -5,25 +5,25 @@
 #include "Mymath.h"
 #include <TextureManager.h>
 
-void PlayerBullet::Initalize(Model* model, const Vector3& position, const Vector3& velocity) {
+void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
 
 	model_ = model;
 
-	// ƒ[ƒ‹ƒhƒgƒ‰ƒ“ƒXƒtƒH[ƒ€‚Ì‰Šú‰»
-	// ˆø”‚Åó‚¯æ‚Á‚½‰ŠúÀ•W‚ğƒZƒbƒg
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒˆãƒ©ãƒ³ã‚¹ãƒ•ã‚©ãƒ¼ãƒ ã®åˆæœŸåŒ–
+	// å¼•æ•°ã§å—ã‘å–ã£ãŸåˆæœŸåº§æ¨™ã‚’ã‚»ãƒƒãƒˆ
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 
-	////ˆö”‚Åó‚¯æ‚Á‚½‘¬“x‚ğƒƒ“ƒo•Ï”‚É‘ã“ü
+	////å› æ•°ã§å—ã‘å–ã£ãŸé€Ÿåº¦ã‚’ãƒ¡ãƒ³ãƒå¤‰æ•°ã«ä»£å…¥
 	velocity_ = velocity;
 }
 
 void PlayerBullet::Update() {
-	//À•W‚ğˆÚ“®‚³‚¹‚é(1ƒtƒŒ[ƒ€•ª‚ÌˆÚ“®—Ê‚ğ‘«‚µ‚±‚Ş)
-	Move(worldTransform_.translation_.velocity_);
+	//åº§æ¨™ã‚’ç§»å‹•ã•ã›ã‚‹(1ãƒ•ãƒ¬ãƒ¼ãƒ åˆ†ã®ç§»å‹•é‡ã‚’è¶³ã—ã“ã‚€)
+	Move(worldTransform_.translation_,velocity_);
 
-	//ŠÔŒo‰ß‚ÅƒfƒX
+	//æ™‚é–“çµŒéã§ãƒ‡ã‚¹
 	if (--deathTimer_ <= 0) {
 		isDead_ = true;
 	}
@@ -33,7 +33,7 @@ void PlayerBullet::Update() {
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”»
 	model_->Draw(worldTransform_, viewProjection);
 }
 
@@ -42,9 +42,9 @@ void PlayerBullet::OnCollision() {
 }
 
 Vector3 PlayerBullet::GetWorldPosition() {
-	//ƒ[ƒ‹ƒhÀ•W‚ğ“ü‚ê‚é•Ï”
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’å…¥ã‚Œã‚‹å¤‰æ•°
 	Vector3 worldPos;
-	//ƒ[ƒ‹ƒhs—ñ‚Ì•½sˆÚ“®¬•ª‚ğæ“¾(ƒ[ƒ‹ƒhÀ•W)
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã®å¹³è¡Œç§»å‹•æˆåˆ†ã‚’å–å¾—(ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™)
 	worldPos.x = worldTransform_.matWorld_.m[3][0];
 	worldPos.y = worldTransform_.matWorld_.m[3][1];
 	worldPos.z = worldTransform_.matWorld_.m[3][2];

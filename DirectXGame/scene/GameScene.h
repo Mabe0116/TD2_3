@@ -43,6 +43,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void CheckAllCollision();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -68,6 +70,8 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelPlayerBody1_;
 	std::unique_ptr<Model> modelPlayerBody2_;
 	std::unique_ptr<Model> modelPlayerBody3_;
+
+	std::unique_ptr<Model> modelPlayerBullet_;
 
 	/// <summary>
 	/// ゲームシーン用

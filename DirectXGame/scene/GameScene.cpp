@@ -27,10 +27,12 @@ void GameScene::Initialize() {
 	modelPlayerBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
 	modelPlayerBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
 
+	modelPlayerBullet_.reset(Model::CreateFromOBJ("PlayerBullet1", true));
+
 	// 自キャラの初期化
 	player_->Initialize(
 	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
-		modelPlayerBody2_.get(),modelPlayerBody3_.get());
+		modelPlayerBody2_.get(),modelPlayerBody3_.get(),modelPlayerBullet_.get());
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -77,6 +79,9 @@ void GameScene::Update() {
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.TransferMatrix();
 	}
+
+	CheckAllCollision();
+
 }
 
 void GameScene::Draw() {
@@ -126,3 +131,14 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+
+void GameScene::CheckAllCollision() {
+
+	//// 判定対象AとBの座標
+	//Vector3 posA, posB;
+
+	//// 自弾リストの取得
+	//const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+
+}
+

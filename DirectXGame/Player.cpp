@@ -6,23 +6,22 @@
 #include <ImGuiManager.h>
 
 
-
-Player::~Player() {
-	// bullet_の解放
-	for (PlayerBullet* bullet : bullets_) {
-		delete bullet;
-	}
-}
-
-void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3) { 
+void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Model* PlayerBullet) { 
 	assert(head);
 	headModel_ = head;
+
 	assert(body1);
 	body1Model_ = body1;
+	
 	assert(body2);
 	body2Model_ = body2;
+	
 	assert(body3);
 	body3Model_ = body3;
+	
+	assert(PlayerBullet);
+	ModelPlayerBullet_ = PlayerBullet;
+
 
 	worldTransformHead_.translation_ = {0, 0, 0};
 	worldTransformBody1_.translation_ = {0, 0, 0};
@@ -109,8 +108,6 @@ void Player::Draw(ViewProjection& viewProjection) {
 
 void Player::Attack() {
 
-	XINPUT_STATE joyState;
-
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 			if (--BulletTimer < 0) {
@@ -142,5 +139,7 @@ void Player::Attack() {
 }
 
 void Player::OnCollision() {}
+
+Vector3 Player::GetWorldPosition() { return Vector3(); }
 
 
