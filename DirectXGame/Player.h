@@ -15,6 +15,12 @@ public:
 
 	void Attack();
 
+	// 衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+	Vector3 GetWorldPosition();
+	// 弾リストを取得
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
 	void SetViewProjection(const ViewProjection* viewProjection) {
@@ -22,6 +28,8 @@ public:
 	}
 
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	~Player();
 
 private:
 	// ゲームパッドの状態を得る変数
@@ -43,4 +51,7 @@ private:
 
 	std::list<PlayerBullet*> bullets_;
 
+	int32_t BulletTimer = 0;
+
+	Model* ModelPlayerBullet_ = nullptr;
 };

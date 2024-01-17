@@ -1,8 +1,18 @@
 ﻿#include "Player.h"
+#include "PlayerBullet.h"
 #include <cassert>
 #include <Input.h>
 #include <Mymath.h>
 #include <ImGuiManager.h>
+
+
+
+Player::~Player() {
+	// bullet_の解放
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
 
 void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3) { 
 	assert(head);
@@ -98,7 +108,39 @@ void Player::Draw(ViewProjection& viewProjection) {
 }
 
 void Player::Attack() {
-	
+
+	XINPUT_STATE joyState;
+
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+			if (--BulletTimer < 0) {
+				BulletTimer = 30;
+
+				// 弾の速度
+				const float kBulletSpeed = 1.0f;
+				Vector3 velocity(0, 0, kBulletSpeed);
+
+				Vector3 N = Normalize(velocity);
+
+				velocity.x = N.x * kBulletSpeed;
+
+				velocity.y = N.y * kBulletSpeed;
+
+				velocity.z = N.z * kBulletSpeed;
+
+				// 弾を生成し、初期化
+				PlayerBullet* newBullet = new PlayerBullet();
+				Vector3 position = GetWorldPosition();
+				position.y = 1.0f;
+				newBullet->Initialize(ModelPlayerBullet_, position, velocity);
+
+				// 弾を登録する
+				bullets_.push_back(newBullet);
+			}
+		}
+	}
 }
+
+void Player::OnCollision() {}
 
 
