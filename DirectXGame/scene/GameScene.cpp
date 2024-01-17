@@ -107,6 +107,9 @@ void GameScene::Initialize() {
 
 	ground_->Initialize(modelGround_);
 
+	audio_->PlayWave(TitleSound_);
+
+	
 
 }
 
