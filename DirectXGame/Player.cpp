@@ -140,6 +140,13 @@ void Player::Attack() {
 
 void Player::OnCollision() {}
 
-Vector3 Player::GetWorldPosition() { return Vector3(); }
+Vector3 Player::GetWorldPosition() {
+
+
+
+
+	return Vector3(); 
+
+}
 
 
