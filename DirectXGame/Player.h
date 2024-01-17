@@ -35,4 +35,6 @@ private:
 	Model* body1Model_ = nullptr;
 	Model* body2Model_ = nullptr;
 	Model* body3Model_ = nullptr;
+
+	float angle = 1.0f;
 };
