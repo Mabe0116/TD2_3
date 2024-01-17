@@ -2,6 +2,8 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include"SuitableBullet.h"
+#include"Trackingbullet.h"
 
 class Enemy {
 public:
@@ -17,7 +19,8 @@ public:
 	void SecondAttack();
 	void ThirdAttack();
 
-
+	//
+	//const std::list<LotEnemy*>& GetLotEnemys() const { return enemyNums_; }
 
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 

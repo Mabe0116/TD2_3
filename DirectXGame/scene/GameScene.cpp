@@ -205,7 +205,6 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-
 	if (scene == TITLE) {
 		TitleSprite_->Draw();
 	}
@@ -215,7 +214,6 @@ void GameScene::Draw() {
 	if (scene == CLEAR) {
 		ClearSprite_->Draw();
 	}
-
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -237,28 +235,29 @@ void GameScene::Draw() {
 		/// ここに3Dオブジェクトの描画処理を追加できる
 		/// </summary>
 
-	// 自キャラの描画
-	player_->Draw(viewProjection_);
-	//敵キャラの描画
-	enemy_->Draw(viewProjection_);
-	//敵の弾の描画
-	trackingBullet_->Draw(viewProjection_);
-	suitableBullet_->Draw(viewProjection_);
+		// 自キャラの描画
+		player_->Draw(viewProjection_);
+		// 敵キャラの描画
+		enemy_->Draw(viewProjection_);
+		// 敵の弾の描画
+		trackingBullet_->Draw(viewProjection_);
+		suitableBullet_->Draw(viewProjection_);
+	}
 
-	// 3Dオブジェクト描画後処理
-	Model::PostDraw();
+		// 3Dオブジェクト描画後処理
+		Model::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	// 前景スプライト描画前処理
-	Sprite::PreDraw(commandList);
+		// 前景スプライト描画前処理
+		Sprite::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに前景スプライトの描画処理を追加できる
-	/// </summary>
+		/// <summary>
+		/// ここに前景スプライトの描画処理を追加できる
+		/// </summary>
 
-	// スプライト描画後処理
-	Sprite::PostDraw();
+		// スプライト描画後処理
+		Sprite::PostDraw();
 
 #pragma endregion
 }

@@ -30,7 +30,7 @@ void Enemy::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 	// ボディ3の親をヘッドにする
 	worldTransformBody3_.parent_ = &worldTransformHead_;
 
-	worldTransform_.translation_ = {10, 0, 0};
+	worldTransform_.translation_ = {0, 0, 0};
 	worldTransformHead_.translation_ = {0, 0, 0};
 	worldTransformBody1_.translation_ = {0, 0, 0};
 	worldTransformBody2_.translation_ = {0, 0, 0};
