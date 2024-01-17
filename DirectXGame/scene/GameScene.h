@@ -14,6 +14,8 @@
 #include <memory>
 #include "Skydome.h"
 #include "Ground.h"
+#include "SuitableBullet.h"
+#include "Trackingbullet.h"
 
 /// <summary>
 /// ゲームシーン
@@ -83,6 +85,14 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelEnemyBody1_;
 	std::unique_ptr<Model> modelEnemyBody2_;
 	std::unique_ptr<Model> modelEnemyBody3_;
+
+	//敵の弾
+	//追尾
+	std::unique_ptr<Trackingbullet> trackingBullet_;
+	std::unique_ptr<Model> modelTrackingBullet_;
+	//複数
+	std::unique_ptr<SuitableBullet> suitableBullet_;
+	std::unique_ptr<Model> modelSuitableBullet_;
 
 	Skydome* skydome_ = nullptr;
 

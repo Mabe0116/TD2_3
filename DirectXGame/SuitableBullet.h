@@ -5,9 +5,9 @@
 class SuitableBullet {
 public:
 	~SuitableBullet();
-	void Initialize();
+	void Initialize(Model* bullet_);
 	void Update();
-	void Draw();
+	void Draw(ViewProjection& viewProjection);
 
 	private:
 	WorldTransform worldTransform_;

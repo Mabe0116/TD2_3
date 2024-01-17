@@ -17,6 +17,8 @@ public:
 	void SecondAttack();
 	void ThirdAttack();
 
+
+
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
 	// 親となるワールドトランスフォーム
@@ -47,6 +49,6 @@ private:
 	Model* bodyModel3_ = nullptr;
 
 	//フェーズ
-	//Phase phase_ = Phase::First;
-	Phase phase_ = Phase::Final;
+	Phase phase_ = Phase::First;
+	//Phase phase_ = Phase::Final;
 };
