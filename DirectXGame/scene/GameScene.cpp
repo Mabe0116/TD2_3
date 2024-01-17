@@ -1,11 +1,17 @@
 #include "GameScene.h"
 #include "AxisIndicator.h"
 #include "TextureManager.h"
+#include <ImGuiManager.h>
 #include <cassert>
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	delete modelSkydome_;
+	delete skydome_;
+	delete modelGround_;
+	delete ground_;
+}
 
 void GameScene::Initialize() {
 
@@ -16,8 +22,23 @@ void GameScene::Initialize() {
 	// 3Dモデルデータの生成
 	model_.reset(Model::Create());
 
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+
+	modelGround_ = Model::CreateFromOBJ("ground", true);
+
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+
+	viewProjection_.translation_ = {
+	    0.0f,
+	    1.0f,
+	    0.0f,
+	};
+
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+
+	viewProjection_.farZ = 1400.0f;
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
@@ -60,6 +81,15 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する (アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	// skydomeの生成
+	skydome_ = new Skydome();
+	ground_ = new Ground();
+
+	// skydomeの初期化
+	skydome_->Initialize(modelSkydome_);
+
+	ground_->Initialize(modelGround_);
 }
 
 void GameScene::Update() {
@@ -68,6 +98,8 @@ void GameScene::Update() {
 
 	// 敵キャラの更新
 	enemy_->Update();
+
+	skydome_->Update();
 
 	// デバッグカメラの更新
 	debugCamera_->Update();
@@ -91,7 +123,8 @@ void GameScene::Update() {
 		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 		viewProjection_.matView = followCamera_->GetViewProjection().matView;
 		viewProjection_.TransferMatrix();
-	}
+	};
+
 }
 
 void GameScene::Draw() {
@@ -116,6 +149,10 @@ void GameScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
+
+	skydome_->Draw(viewProjection_);
+
+	ground_->Draw(viewProjection_);
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる

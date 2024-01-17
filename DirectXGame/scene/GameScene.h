@@ -12,6 +12,8 @@
 #include "WorldTransform.h"
 #include <DebugCamera.h>
 #include <memory>
+#include "Skydome.h"
+#include "Ground.h"
 
 /// <summary>
 /// ゲームシーン
@@ -52,6 +54,10 @@ private: // メンバ変数
 	// 3Dモデルデータ
 	std::unique_ptr<Model> model_;
 
+	
+	// ワールドトランスフォーム
+	WorldTransform worldTransform_;
+
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 
@@ -77,6 +83,14 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelEnemyBody1_;
 	std::unique_ptr<Model> modelEnemyBody2_;
 	std::unique_ptr<Model> modelEnemyBody3_;
+
+	Skydome* skydome_ = nullptr;
+
+	Model* modelSkydome_ = nullptr;
+
+	Ground* ground_ = nullptr;
+
+	Model* modelGround_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
