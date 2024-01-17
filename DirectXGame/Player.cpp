@@ -14,10 +14,15 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 	assert(body3);
 	body3Model_ = body3;
 
-	worldTransformHead_.translation_ = {0, 0, 0};
-	worldTransformBody1_.translation_ = {0, 0, 0};
-	worldTransformBody2_.translation_ = {0, 0, 0};
-	worldTransformBody3_.translation_ = {0, 0, 0};
+	worldTransformHead_.translation_ = {0, 1.0f, 0};
+	worldTransformBody1_.translation_ = {0, 1.0f, 0};
+	worldTransformBody2_.translation_ = {0, 1.0f, 0};
+	worldTransformBody3_.translation_ = {0, 1.0f, 0};
+
+	worldTransformHead_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody1_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody2_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody3_.scale_ = {0.5f, 0.5f, 0.5f};
 
 	worldTransformHead_.Initialize();
 	worldTransformBody1_.Initialize();
@@ -26,17 +31,26 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 }
 
 void Player::Update() {
+
+	// 半径
+	float radius = 50.0f;
+	// ラジアン
+	float radian = angle * 3.14f / 180.0f;
+	float add_x = 0;
+	float add_z = 0;
+	add_x = cosf(radian) * radius;
+	add_z = sinf(radian) * radius;
+
 	// ゲームパッドが有効の場合if文が通る
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
 		// 速さ
 		float speed = 0.3f;
-
 		// 移動量
 		Vector3 move = {0, 0, 0};
 
-		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
-		move.z += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
+		angle += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
+		angle += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
 
 		// カメラの角度から回転行列を計算する
 		Matrix4x4 RotationMatrix = MakeRotateMatrix(viewProjection_->rotation_);
@@ -48,11 +62,18 @@ void Player::Update() {
 		worldTransformBody1_.rotation_.y = std::atan2(move.x, move.z);
 		worldTransformBody2_.rotation_.y = std::atan2(move.x, move.z);
 		worldTransformBody3_.rotation_.y = std::atan2(move.x, move.z);
+		
+		// 結果ででた位置を中心位置に加算し、それを描画位置とする
+		worldTransformHead_.translation_.x = add_x;
+		worldTransformHead_.translation_.z = add_z;
+		worldTransformBody1_.translation_.x = add_x;
+		worldTransformBody1_.translation_.z = add_z;
+		worldTransformBody2_.translation_.x = add_x;
+		worldTransformBody2_.translation_.z = add_z;
+		worldTransformBody3_.translation_.x = add_x;
+		worldTransformBody3_.translation_.z = add_z;
 
-		worldTransformHead_.translation_ = Add(worldTransformHead_.translation_, move);
-		worldTransformBody1_.translation_ = Add(worldTransformBody1_.translation_, move);
-		worldTransformBody2_.translation_ = Add(worldTransformBody2_.translation_, move);
-		worldTransformBody3_.translation_ = Add(worldTransformBody3_.translation_, move);
+
 	}
 
 	worldTransformHead_.UpdateMatrix();
@@ -61,7 +82,11 @@ void Player::Update() {
 	worldTransformBody3_.UpdateMatrix();
 
 	ImGui::Begin("window");
-	ImGui::DragFloat3("player position", &worldTransformHead_.translation_.x);
+	ImGui::DragFloat3("player head", &worldTransformHead_.translation_.x);
+	ImGui::DragFloat3("player body1", &worldTransformBody1_.translation_.x);
+	ImGui::DragFloat3("player body2", &worldTransformBody2_.translation_.x);
+	ImGui::DragFloat3("player body3", &worldTransformBody3_.translation_.x);
+	ImGui::DragFloat("angle", &angle);
 	ImGui::End();
 
 }
