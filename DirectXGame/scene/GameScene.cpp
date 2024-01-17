@@ -1,11 +1,17 @@
 #include "GameScene.h"
-#include "TextureManager.h"
-#include <cassert>
 #include "AxisIndicator.h"
+#include "TextureManager.h"
+#include <ImGuiManager.h>
+#include <cassert>
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	delete modelSkydome_;
+	delete skydome_;
+	delete modelGround_;
+	delete ground_;
+}
 
 void GameScene::Initialize() {
 
@@ -16,8 +22,36 @@ void GameScene::Initialize() {
 	// 3Dモデルデータの生成
 	model_.reset(Model::Create());
 
+	TitleTexture_ = TextureManager::Load("scene/title.png");
+	OperationTexture_ = TextureManager::Load("scene/operation.png");
+	ClearTexture_ = TextureManager::Load("scene/clear.png");
+
+	TitleSprite_ = std::make_unique<Sprite>();
+	OperationSprite_ = std::make_unique<Sprite>();
+	ClearSprite_ = std::make_unique<Sprite>();
+
+	TitleSprite_.reset(Sprite::Create(TitleTexture_, {0, 0}));
+	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
+	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
+
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+
+	modelGround_ = Model::CreateFromOBJ("ground", true);
+
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+
+	viewProjection_.translation_ = {
+	    0.0f,
+	    1.0f,
+	    0.0f,
+	};
+
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+
+	viewProjection_.farZ = 1400.0f;
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
@@ -33,6 +67,35 @@ void GameScene::Initialize() {
 	player_->Initialize(
 	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
 		modelPlayerBody2_.get(),modelPlayerBody3_.get(),modelPlayerBullet_.get());
+
+	// 敵キャラの生成
+	enemy_ = std::make_unique<Enemy>();
+	// 3Dモデルの生成
+	modelEnemyHead_.reset(Model::CreateFromOBJ("player_Head", true));
+	modelEnemyBody1_.reset(Model::CreateFromOBJ("player_Body1", true));
+	modelEnemyBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
+	modelEnemyBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
+	// 敵キャラの初期化
+	enemy_->Initialize(
+	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
+	    modelEnemyBody3_.get());
+
+
+	//敵の弾
+	//追尾
+	trackingBullet_ = std::make_unique<Trackingbullet>();
+	// 3Dモデルの生成
+	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
+	// 追尾弾の初期化
+	trackingBullet_->Initialize(modelTrackingBullet_.get());
+
+	//複数
+	suitableBullet_ = std::make_unique<SuitableBullet>();
+	// 3Dモデルの生成
+	modelSuitableBullet_.reset(Model::CreateFromOBJ("bullet", true));
+	// 複数弾の初期化
+	suitableBullet_->Initialize(modelSuitableBullet_.get());
+
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -50,34 +113,80 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する (アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	// skydomeの生成
+	skydome_ = new Skydome();
+	ground_ = new Ground();
+
+	// skydomeの初期化
+	skydome_->Initialize(modelSkydome_);
+
+	ground_->Initialize(modelGround_);
+
+
 }
 
 void GameScene::Update() {
-	// 自キャラの更新
-	player_->Update();
 
-	// デバッグカメラの更新
-	debugCamera_->Update();
+	switch (scene) {
+
+	case GameScene::TITLE: // タイトルシーン
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = OPERATION;
+				}
+			}
+		}
+		break;
+
+	case GameScene::OPERATION: // 操作説明
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = GAME;
+				}
+			}
+		}
+		break;
+	case GameScene::GAME:
+
+		// 自キャラの更新
+		player_->Update();
+
+	// 敵キャラの更新
+	enemy_->Update();
+	//敵弾の更新
+	trackingBullet_->Update();
+	suitableBullet_->Update();
+
+	skydome_->Update();
+
+		// デバッグカメラの更新
+		debugCamera_->Update();
 
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_RETURN)) {
-		isDebugCameraActive_ = true;
-	}
+		if (input_->TriggerKey(DIK_RETURN)) {
+			isDebugCameraActive_ = true;
+		}
 #endif
-
-	// カメラの処理
-	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		// ビュープロジェクション行列の転送
-		viewProjection_.TransferMatrix();
-	} else if (isDebugCameraActive_ == false) {
-		// 追従カメラの更新
-		followCamera_->Update();
-		viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
-		viewProjection_.matView = followCamera_->GetViewProjection().matView;
-		viewProjection_.TransferMatrix();
+		// カメラの処理
+		if (isDebugCameraActive_) {
+			debugCamera_->Update();
+			viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+			viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+			// ビュープロジェクション行列の転送
+			viewProjection_.TransferMatrix();
+		} else if (isDebugCameraActive_ == false) {
+			// 追従カメラの更新
+			followCamera_->Update();
+			viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
+			viewProjection_.matView = followCamera_->GetViewProjection().matView;
+			viewProjection_.TransferMatrix();
+		};
+		break;
 	}
 
 	CheckAllCollision();
@@ -97,6 +206,16 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
+	if (scene == TITLE) {
+		TitleSprite_->Draw();
+	}
+	if (scene == OPERATION) {
+		OperationSprite_->Draw();
+	}
+	if (scene == CLEAR) {
+		ClearSprite_->Draw();
+	}
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -107,27 +226,39 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
+	if (scene == GAME) {
 
-	// 自キャラの描画
-	player_->Draw(viewProjection_);
+		skydome_->Draw(viewProjection_);
 
-	// 3Dオブジェクト描画後処理
-	Model::PostDraw();
+		ground_->Draw(viewProjection_);
+
+		/// <summary>
+		/// ここに3Dオブジェクトの描画処理を追加できる
+		/// </summary>
+
+		// 自キャラの描画
+		player_->Draw(viewProjection_);
+		// 敵キャラの描画
+		enemy_->Draw(viewProjection_);
+		// 敵の弾の描画
+		trackingBullet_->Draw(viewProjection_);
+		suitableBullet_->Draw(viewProjection_);
+	}
+
+		// 3Dオブジェクト描画後処理
+		Model::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	// 前景スプライト描画前処理
-	Sprite::PreDraw(commandList);
+		// 前景スプライト描画前処理
+		Sprite::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに前景スプライトの描画処理を追加できる
-	/// </summary>
+		/// <summary>
+		/// ここに前景スプライトの描画処理を追加できる
+		/// </summary>
 
-	// スプライト描画後処理
-	Sprite::PostDraw();
+		// スプライト描画後処理
+		Sprite::PostDraw();
 
 #pragma endregion
 }

@@ -50,4 +50,6 @@ private:
 	int32_t BulletTimer = 0;
 
 	Model* ModelPlayerBullet_ = nullptr;
+
+	float angle = 1.0f;
 };
