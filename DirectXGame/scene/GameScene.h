@@ -121,6 +121,8 @@ private: // メンバ変数
 	uint32_t Titlevoice_ = 0;
 	uint32_t Operationvoice_ = 0;
 
+	uint32_t voiceHandle_ = 0;
+
 
 	/*std::unique_ptr<Audio> TitleAudio_ = nullptr;
 	std::unique_ptr<Audio> OperationSound_ = nullptr;

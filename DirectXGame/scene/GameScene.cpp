@@ -36,16 +36,13 @@ void GameScene::Initialize() {
 
 
 	//サウンド読み込み
-	TitleSound_ = audio_->LoadWave("mokugyo.wav");
-	OperationSound_ = audio_->LoadWave("fanfare.wav");
+	TitleSound_ = audio_->LoadWave("fanfare.wav");
+	OperationSound_ = audio_->LoadWave("mokugyo.wav");
 	//ClearSound_ = audio_->LoadWave("");
 
 	//音声再生
 	/*audio_->PlayWave(TitleSound_);
 	audio_->PlayWave(OperationSound_);*/
-
-		Operationvoice_ = audio_->PlayWave(OperationSound_, false);
-	
 
 
 
@@ -108,24 +105,25 @@ void GameScene::Initialize() {
 	ground_->Initialize(modelGround_);
 
 	audio_->PlayWave(TitleSound_);
+	//audio_->PlayWave(OperationSound_);
 
-	
 
+	Titlevoice_ = audio_->PlayWave(TitleSound_, true);
+	//Operationvoice_ = audio_->PlayWave(OperationSound_, false);
 }
 
 void GameScene::Update() {
 
 	switch (scene) {
-
 	case GameScene::TITLE: // タイトルシーン
-		Titlevoice_ = audio_->PlayWave(TitleSound_, true);
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+
 					scene = OPERATION;
 					if (scene == OPERATION) {
-						Titlevoice_ = audio_->PlayWave(TitleSound_, false);
+						audio_->StopWave(Titlevoice_);
 					}
 				}
 			}
@@ -133,19 +131,25 @@ void GameScene::Update() {
 		break;
 
 	case GameScene::OPERATION: // 操作説明
-		Operationvoice_ = audio_->PlayWave(OperationSound_, true);
+		if (scene == OPERATION) {
+		    Operationvoice_ = audio_->PlayWave(OperationSound_, true);
+		}
+		if (!audio_->IsPlaying(Operationvoice_)) {
+			Operationvoice_ = audio_->PlayWave(Operationvoice_, true, 0.5f);
+		}
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
 					scene = GAME;
 					if (scene == GAME) {
-						Operationvoice_ = audio_->PlayWave(OperationSound_, false);
+						audio_->StopWave(Operationvoice_);
 					}
 				}
 			}
 		}
 		break;
+
 	case GameScene::GAME:
 
 		// 自キャラの更新
