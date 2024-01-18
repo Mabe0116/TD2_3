@@ -37,6 +37,7 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Mo
 	worldTransformBody1_.Initialize();
 	worldTransformBody2_.Initialize();
 	worldTransformBody3_.Initialize();
+	worldTransform_.Initialize();
 }
 
 void Player::Update() {
@@ -89,6 +90,7 @@ void Player::Update() {
 	worldTransformBody1_.UpdateMatrix();
 	worldTransformBody2_.UpdateMatrix();
 	worldTransformBody3_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -166,11 +168,16 @@ void Player::Attack() {
 void Player::OnCollision() {}
 
 Vector3 Player::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransformBody1_.matWorld_.m[3][0];
+	worldPos.y = worldTransformBody1_.matWorld_.m[3][1];
+	worldPos.z = worldTransformBody1_.matWorld_.m[3][2];
 
+	return worldPos;
 
-
-
-	return Vector3(); 
+	//return Vector3(); 
 
 }
 
