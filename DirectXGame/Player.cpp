@@ -4,7 +4,7 @@
 #include <Input.h>
 #include <Mymath.h>
 #include <ImGuiManager.h>
-
+#include "Enemy.h"
 
 void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Model* PlayerBullet) { 
 	assert(head);
@@ -22,6 +22,8 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Mo
 	assert(PlayerBullet);
 	ModelPlayerBullet_ = PlayerBullet;
 
+	// 敵キャラの生成
+	enemy_ = std::make_unique<Enemy>();
 
 	worldTransformHead_.translation_ = {0, 1.0f, 0};
 	worldTransformBody1_.translation_ = {0, 1.0f, 0};
@@ -50,6 +52,15 @@ void Player::Update() {
 	add_x = cosf(radian) * radius;
 	add_z = sinf(radian) * radius;
 
+	// プレイヤーから敵に向かう差分ベクトル
+	DiffVector.x = enemy_->GetWorldPosition().x - worldTransformHead_.translation_.x;
+	DiffVector.z = enemy_->GetWorldPosition().z - worldTransformHead_.translation_.z;
+
+	worldTransformHead_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
+	worldTransformBody1_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
+	worldTransformBody2_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
+	worldTransformBody3_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z); 
+
 	// ゲームパッドが有効の場合if文が通る
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
@@ -61,17 +72,6 @@ void Player::Update() {
 		angle += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed;
 		angle += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed;
 
-		// カメラの角度から回転行列を計算する
-		Matrix4x4 RotationMatrix = MakeRotateMatrix(viewProjection_->rotation_);
-
-		// オフセットをカメラの回転に合わせて回転させる
-		move = TransformNormal(move, RotationMatrix);
-
-		worldTransformHead_.rotation_.y = std::atan2(move.x, move.z);
-		worldTransformBody1_.rotation_.y = std::atan2(move.x, move.z);
-		worldTransformBody2_.rotation_.y = std::atan2(move.x, move.z);
-		worldTransformBody3_.rotation_.y = std::atan2(move.x, move.z);
-		
 		// 結果ででた位置を中心位置に加算し、それを描画位置とする
 		worldTransformHead_.translation_.x = add_x;
 		worldTransformHead_.translation_.z = add_z;
@@ -81,8 +81,6 @@ void Player::Update() {
 		worldTransformBody2_.translation_.z = add_z;
 		worldTransformBody3_.translation_.x = add_x;
 		worldTransformBody3_.translation_.z = add_z;
-
-
 	}
 
 	worldTransformHead_.UpdateMatrix();
@@ -106,7 +104,6 @@ void Player::Update() {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
-
 
 	ImGui::Begin("window");
 	ImGui::DragFloat3("player head", &worldTransformHead_.translation_.x);
@@ -174,4 +171,12 @@ Vector3 Player::GetWorldPosition() {
 
 }
 
+Vector3 Player::GetWorldRotationPos() { 
+	Vector3 worldRotationPos;
 
+	worldRotationPos.x = worldTransformHead_.rotation_.x;
+	worldRotationPos.y = worldTransformHead_.rotation_.y;
+	worldRotationPos.z = worldTransformHead_.rotation_.z;
+
+	return worldRotationPos;
+}
