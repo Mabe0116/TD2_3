@@ -264,7 +264,34 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollision() {
+	    Vector3 posA, posB;
 
+		const std::list<PlayerBullet*> playerBullets = player_->GetBullets();
+
+	for (PlayerBullet* bullet : playerBullets) {
+
+		posA = player_->GetWorldPosition();
+
+		// 自弾と敵の当たり判定
+		posB = enemy_->GetWorldPosition();
+
+		float X = (posB.x - posA.x);
+		float Y = (posB.y - posA.y);
+		float Z = (posB.z - posA.z);
+
+		float center = sqrtf(X * X + Y * Y + Z * Z);
+		float R1 = 1.5f;
+		float R2 = 0.5f;
+		float RR = (R1 + R2);
+
+		if (center <= (RR * RR)) {
+			enemy_->OnCollision();
+
+			bullet->OnCollision();
+
+			EnemyLife--;
+		}
+	}
 	//// 判定対象AとBの座標
 	//Vector3 posA, posB;
 

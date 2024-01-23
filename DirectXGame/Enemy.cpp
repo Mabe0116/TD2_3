@@ -79,6 +79,17 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	 }
 }
 
+void Enemy::OnCollision() { isDead_ = true; }
+
+Vector3 Enemy::GetWorldPosition() {
+	 Vector3 pos;
+	 pos.x = worldTransform_.matWorld_.m[3][0];
+	 pos.y = worldTransform_.matWorld_.m[3][1];
+	 pos.z = worldTransform_.matWorld_.m[3][2];
+
+	 return pos;
+}
+
 void Enemy::SecondAttack() {}
 
 void Enemy::ThirdAttack() {}

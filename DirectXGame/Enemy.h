@@ -15,6 +15,11 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
+	//当たり判定
+	void OnCollision();
+
+	Vector3 GetWorldPosition();
+
 	//攻撃
 	void SecondAttack();
 	void ThirdAttack();
@@ -50,6 +55,9 @@ private:
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 
 	//フェーズ
 	Phase phase_ = Phase::First;

@@ -103,7 +103,11 @@ private: // メンバ変数
 	Ground* ground_ = nullptr;
 
 	Model* modelGround_ = nullptr;
+	
+	//ライフ
+	uint32_t LifeHandle_;
 
+	int EnemyLife = 5;
 
 	private:
 	//シーン切り替え
