@@ -33,12 +33,15 @@ void PlayerBullet::Update() {
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
-	// モデルの描画
-	model_->Draw(worldTransform_, viewProjection);
+	
+		// モデルの描画
+		model_->Draw(worldTransform_, viewProjection);
+
 }
 
 void PlayerBullet::OnCollision() { 
 	isDead_ = true; 
+
 }
 
 Vector3 PlayerBullet::GetWorldPosition() {

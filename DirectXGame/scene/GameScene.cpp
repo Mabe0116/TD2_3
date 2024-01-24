@@ -186,9 +186,6 @@ void GameScene::Update() {
 		};
 		break;
 	}
-
-	
-
 	CheckAllCollision();
 }
 
@@ -264,9 +261,36 @@ void GameScene::Draw() {
 
 void GameScene::CheckAllCollision() {
 
-	//// 判定対象AとBの座標
-	// Vector3 posA, posB;
+	Vector3 posA, posB;
 
-	//// 自弾リストの取得
-	// const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+
+	posA = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* bullet : playerBullets) {
+
+		posB = bullet->GetWorldPosition();
+
+		float X = (posB.x - posA.x);
+		float Y = (posB.y - posA.y);
+		float Z = (posB.z - posA.z);
+
+		float center = sqrtf(X * X + Y * Y + Z * Z);
+		float R1 = 1.5f; // 自分で決める
+		float R2 = 0.5f; // 自分で決める
+		float RR = (R1 + R2);
+
+		if (center <= (RR * RR)) {
+			// 敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision();
+			// 自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+
+			ImGui::Begin("a");
+			ImGui::End();
+
+			EnemyLife--;
+
+		}
+	}
 }
