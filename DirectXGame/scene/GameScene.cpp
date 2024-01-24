@@ -34,7 +34,6 @@ void GameScene::Initialize() {
 	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
 
-
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	modelGround_ = Model::CreateFromOBJ("ground", true);
@@ -65,8 +64,8 @@ void GameScene::Initialize() {
 
 	// 自キャラの初期化
 	player_->Initialize(
-	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
-		modelPlayerBody2_.get(),modelPlayerBody3_.get(),modelPlayerBullet_.get());
+	    modelPlayerHead_.get(), modelPlayerBody1_.get(), modelPlayerBody2_.get(),
+	    modelPlayerBody3_.get(), modelPlayerBullet_.get());
 
 	// 敵キャラの生成
 	enemy_ = std::make_unique<Enemy>();
@@ -79,23 +78,22 @@ void GameScene::Initialize() {
 	enemy_->Initialize(
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
 	    modelEnemyBody3_.get());
+	player_->SetEnemy(enemy_.get());
 
-
-	//敵の弾
-	//追尾
+	// 敵の弾
+	// 追尾
 	trackingBullet_ = std::make_unique<Trackingbullet>();
 	// 3Dモデルの生成
 	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
 	// 追尾弾の初期化
 	trackingBullet_->Initialize(modelTrackingBullet_.get());
 
-	//複数
+	// 複数
 	suitableBullet_ = std::make_unique<SuitableBullet>();
 	// 3Dモデルの生成
 	modelSuitableBullet_.reset(Model::CreateFromOBJ("bullet", true));
 	// 複数弾の初期化
 	suitableBullet_->Initialize(modelSuitableBullet_.get());
-
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -122,8 +120,6 @@ void GameScene::Initialize() {
 	skydome_->Initialize(modelSkydome_);
 
 	ground_->Initialize(modelGround_);
-
-
 }
 
 void GameScene::Update() {
@@ -156,13 +152,13 @@ void GameScene::Update() {
 		// 自キャラの更新
 		player_->Update();
 
-	// 敵キャラの更新
-	enemy_->Update();
-	//敵弾の更新
-	trackingBullet_->Update();
-	suitableBullet_->Update();
+		// 敵キャラの更新
+		enemy_->Update();
+		// 敵弾の更新
+		trackingBullet_->Update();
+		suitableBullet_->Update();
 
-	skydome_->Update();
+		skydome_->Update();
 
 		// デバッグカメラの更新
 		debugCamera_->Update();
@@ -190,7 +186,6 @@ void GameScene::Update() {
 	}
 
 	CheckAllCollision();
-
 }
 
 void GameScene::Draw() {
@@ -245,58 +240,29 @@ void GameScene::Draw() {
 		suitableBullet_->Draw(viewProjection_);
 	}
 
-		// 3Dオブジェクト描画後処理
-		Model::PostDraw();
+	// 3Dオブジェクト描画後処理
+	Model::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画
-		// 前景スプライト描画前処理
-		Sprite::PreDraw(commandList);
+	// 前景スプライト描画前処理
+	Sprite::PreDraw(commandList);
 
-		/// <summary>
-		/// ここに前景スプライトの描画処理を追加できる
-		/// </summary>
+	/// <summary>
+	/// ここに前景スプライトの描画処理を追加できる
+	/// </summary>
 
-		// スプライト描画後処理
-		Sprite::PostDraw();
+	// スプライト描画後処理
+	Sprite::PostDraw();
 
 #pragma endregion
 }
 
 void GameScene::CheckAllCollision() {
-	    Vector3 posA, posB;
 
-		const std::list<PlayerBullet*> playerBullets = player_->GetBullets();
-
-	for (PlayerBullet* bullet : playerBullets) {
-
-		posA = player_->GetWorldPosition();
-
-		// 自弾と敵の当たり判定
-		posB = enemy_->GetWorldPosition();
-
-		float X = (posB.x - posA.x);
-		float Y = (posB.y - posA.y);
-		float Z = (posB.z - posA.z);
-
-		float center = sqrtf(X * X + Y * Y + Z * Z);
-		float R1 = 1.5f;
-		float R2 = 0.5f;
-		float RR = (R1 + R2);
-
-		if (center <= (RR * RR)) {
-			enemy_->OnCollision();
-
-			bullet->OnCollision();
-
-			EnemyLife--;
-		}
-	}
 	//// 判定対象AとBの座標
-	//Vector3 posA, posB;
+	// Vector3 posA, posB;
 
 	//// 自弾リストの取得
-	//const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
-
+	// const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 }
-

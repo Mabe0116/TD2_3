@@ -1,13 +1,15 @@
 ﻿#pragma once
 #include "Model.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
 #include "PlayerBullet.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
 #include <XInput.h>
+
+class Enemy;
 
 class Player {
 public:
-	void Initialize(Model* head, Model* body1, Model* body2, Model* body3,Model* PlayerBullet);
+	void Initialize(Model* head, Model* body1, Model* body2, Model* body3, Model* PlayerBullet);
 
 	void Update();
 
@@ -26,6 +28,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
 private:
 	// ゲームパッドの状態を得る変数
@@ -53,4 +57,6 @@ private:
 	Model* ModelPlayerBullet_ = nullptr;
 
 	float angle = 1.0f;
+
+	Enemy* enemy_ = nullptr;
 };
