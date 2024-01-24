@@ -109,7 +109,7 @@ void GameScene::Initialize() {
 
 
 	Titlevoice_ = audio_->PlayWave(TitleSound_, true);
-	//Operationvoice_ = audio_->PlayWave(OperationSound_, false);
+	Operationvoice_ = audio_->PlayWave(OperationSound_, false);
 }
 
 void GameScene::Update() {
