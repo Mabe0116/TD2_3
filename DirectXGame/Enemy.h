@@ -32,6 +32,8 @@ public:
 	// 親となるワールドトランスフォーム
 	void SetParent(const WorldTransform* parent);
 
+	Vector3 GetWorldPosition();
+
 private:
 	//行動フェーズ
 	enum class Phase {

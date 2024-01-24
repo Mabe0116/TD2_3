@@ -120,10 +120,12 @@ void GameScene::Initialize() {
 	skydome_->Initialize(modelSkydome_);
 
 	ground_->Initialize(modelGround_);
+
+	//player_->SetParent(&followCamera_->GetWorldTransform());
 }
 
 void GameScene::Update() {
-
+	
 	switch (scene) {
 
 	case GameScene::TITLE: // タイトルシーン
@@ -149,14 +151,15 @@ void GameScene::Update() {
 		break;
 	case GameScene::GAME:
 
-		// 自キャラの更新
-		player_->Update();
+	// 自キャラの更新
+	player_->Update();
 
-		// 敵キャラの更新
-		enemy_->Update();
-		// 敵弾の更新
-		trackingBullet_->Update();
-		suitableBullet_->Update();
+	// 敵キャラの更新
+	enemy_->Update();
+
+	//敵弾の更新
+	trackingBullet_->Update();
+	suitableBullet_->Update();
 
 		skydome_->Update();
 
@@ -184,6 +187,8 @@ void GameScene::Update() {
 		};
 		break;
 	}
+
+	
 
 	CheckAllCollision();
 }

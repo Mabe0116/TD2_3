@@ -96,3 +96,11 @@ void Enemy::ThirdAttack() {}
 
 // 親子関係を結ぶ
 void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
+
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos; 
+	worldPos.x = worldTransformHead_.translation_.x;
+	worldPos.y = worldTransformHead_.translation_.y;
+	worldPos.z = worldTransformHead_.translation_.z;
+	return worldPos;
+}

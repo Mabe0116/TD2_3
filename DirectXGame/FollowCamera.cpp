@@ -2,11 +2,26 @@
 #include "Input.h"
 #include "MyMath.h"
 
-void FollowCamera::Initialize() { viewProjection_.Initialize(); }
+void FollowCamera::Initialize() {
+	viewProjection_.Initialize();
+	// 敵キャラの生成
+	enemy_ = std::make_unique<Enemy>();
+}
 
 void FollowCamera::Update() {
+
+	// カメラから敵に向かう差分ベクトル
+	DiffVector.x = enemy_->GetWorldPosition().x - viewProjection_.translation_.x;
+	DiffVector.z = enemy_->GetWorldPosition().z - viewProjection_.translation_.z;
+
+	viewProjection_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
+	viewProjection_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
+	viewProjection_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
+	viewProjection_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z); 
+
 	// 追従対象がいれば
 	if (target_) {
+
 		// 追従対象からカメラまでのオフセット
 		Vector3 offset = {0.0f, 5.0f, -20.0f};
 
@@ -18,17 +33,6 @@ void FollowCamera::Update() {
 
 		// 座標をコピーしてオフセット分ずらす
 		viewProjection_.translation_ = Add(target_->translation_, offset);
-	}
-
-	// ゲームパッドの状態を得る変数
-	XINPUT_STATE joyState;
-
-	// ゲームパッドが有効の場合if文が通る
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		// 回転する速さ
-		const float speed = 0.1f;
-
-		viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * speed;
 	}
 
 	// ビュー行列の更新

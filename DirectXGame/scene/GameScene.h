@@ -134,8 +134,6 @@ private: // メンバ変数
 	XINPUT_STATE joyState;
 	XINPUT_STATE prevjoyState;
 
-
-
 	std::unique_ptr<Model> modelPlayerBullet_;
 
 	/// <summary>

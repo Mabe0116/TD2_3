@@ -5,6 +5,7 @@
 #include "WorldTransform.h"
 #include <XInput.h>
 
+// 前方宣言
 class Enemy;
 
 class Player {
@@ -24,6 +25,8 @@ public:
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
+
+	Vector3 GetWorldRotationPos();
 
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
@@ -56,7 +59,14 @@ private:
 
 	Model* ModelPlayerBullet_ = nullptr;
 
-	float angle = 1.0f;
+	float angle = 90.0f;
 
-	Enemy* enemy_ = nullptr;
+	// 敵キャラ
+	std::unique_ptr<Enemy> enemy_;
+	// プレイヤーから敵に向かう差分ベクトル
+	Vector3 DiffVector = {0, 0, 0};
+
+public:
+	// 親子関係を結ぶ
+	void SetParent(const WorldTransform* parent) { worldTransformHead_.parent_ = parent; };
 };
