@@ -78,8 +78,7 @@ void GameScene::Initialize() {
 	enemy_->Initialize(
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
 	    modelEnemyBody3_.get());
-	player_->SetEnemy(enemy_.get());
-
+	
 	// 敵の弾
 	// 追尾
 	trackingBullet_ = std::make_unique<Trackingbullet>();

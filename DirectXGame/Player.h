@@ -32,8 +32,6 @@ public:
 		viewProjection_ = viewProjection;
 	}
 
-	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-
 private:
 	// ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
