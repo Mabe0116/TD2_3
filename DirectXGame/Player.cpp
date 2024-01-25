@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
+#include "Enemy.h"
 #include "PlayerBullet.h"
-#include <cassert>
+#include <ImGuiManager.h>
 #include <Input.h>
 #include <Mymath.h>
 #include <ImGuiManager.h>
@@ -12,13 +13,13 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Mo
 
 	assert(body1);
 	body1Model_ = body1;
-	
+
 	assert(body2);
 	body2Model_ = body2;
-	
+
 	assert(body3);
 	body3Model_ = body3;
-	
+
 	assert(PlayerBullet);
 	ModelPlayerBullet_ = PlayerBullet;
 
@@ -39,6 +40,7 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Mo
 	worldTransformBody1_.Initialize();
 	worldTransformBody2_.Initialize();
 	worldTransformBody3_.Initialize();
+	worldTransform_.Initialize();
 }
 
 void Player::Update() {
@@ -87,6 +89,7 @@ void Player::Update() {
 	worldTransformBody1_.UpdateMatrix();
 	worldTransformBody2_.UpdateMatrix();
 	worldTransformBody3_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -112,7 +115,6 @@ void Player::Update() {
 	ImGui::DragFloat3("player body3", &worldTransformBody3_.translation_.x);
 	ImGui::DragFloat("angle", &angle);
 	ImGui::End();
-
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
@@ -122,10 +124,9 @@ void Player::Draw(ViewProjection& viewProjection) {
 	body2Model_->Draw(worldTransformBody2_, viewProjection);
 	body3Model_->Draw(worldTransformBody3_, viewProjection);
 
-	 for (PlayerBullet* bullet : bullets_) {
+	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
-
 }
 
 void Player::Attack() {
@@ -135,17 +136,16 @@ void Player::Attack() {
 			if (--BulletTimer < 0) {
 				BulletTimer = 30;
 
-				// 弾の速度
+				//// 弾の速度
 				const float kBulletSpeed = 1.0f;
-				Vector3 velocity(0, 0, kBulletSpeed);
-
-				Vector3 N = Normalize(velocity);
-
-				velocity.x = N.x * kBulletSpeed;
-
-				velocity.y = N.y * kBulletSpeed;
-
-				velocity.z = N.z * kBulletSpeed;
+				Vector3 sub =
+				    Subtract(enemy_->GetWorldTransform().translation_, GetWorldPosition());
+				sub.y += 5.0f;
+				sub = Normalize(sub);
+				Vector3 velocity{};
+				velocity.x = sub.x * kBulletSpeed;
+				velocity.y = sub.y * kBulletSpeed;
+				velocity.z = sub.z * kBulletSpeed;
 
 				// 弾を生成し、初期化
 				PlayerBullet* newBullet = new PlayerBullet();
@@ -163,12 +163,16 @@ void Player::Attack() {
 void Player::OnCollision() {}
 
 Vector3 Player::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransformBody1_.matWorld_.m[3][0];
+	worldPos.y = worldTransformBody1_.matWorld_.m[3][1];
+	worldPos.z = worldTransformBody1_.matWorld_.m[3][2];
 
+	return worldPos;
 
-
-
-	return Vector3(); 
-
+	// return Vector3();
 }
 
 Vector3 Player::GetWorldRotationPos() { 

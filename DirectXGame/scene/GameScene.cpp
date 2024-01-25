@@ -34,7 +34,6 @@ void GameScene::Initialize() {
 	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
 
-
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	modelGround_ = Model::CreateFromOBJ("ground", true);
@@ -65,8 +64,8 @@ void GameScene::Initialize() {
 
 	// 自キャラの初期化
 	player_->Initialize(
-	    modelPlayerHead_.get(), modelPlayerBody1_.get(),
-		modelPlayerBody2_.get(),modelPlayerBody3_.get(),modelPlayerBullet_.get());
+	    modelPlayerHead_.get(), modelPlayerBody1_.get(), modelPlayerBody2_.get(),
+	    modelPlayerBody3_.get(), modelPlayerBullet_.get());
 
 	// 敵キャラの生成
 	enemy_ = std::make_unique<Enemy>();
@@ -168,11 +167,7 @@ void GameScene::Update() {
 		};
 		break;
 	}
-
-	
-
 	CheckAllCollision();
-
 }
 
 void GameScene::Draw() {
@@ -224,31 +219,56 @@ void GameScene::Draw() {
 		enemy_->Draw(viewProjection_);
 	}
 
-		// 3Dオブジェクト描画後処理
-		Model::PostDraw();
+	// 3Dオブジェクト描画後処理
+	Model::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画
-		// 前景スプライト描画前処理
-		Sprite::PreDraw(commandList);
+	// 前景スプライト描画前処理
+	Sprite::PreDraw(commandList);
 
-		/// <summary>
-		/// ここに前景スプライトの描画処理を追加できる
-		/// </summary>
+	/// <summary>
+	/// ここに前景スプライトの描画処理を追加できる
+	/// </summary>
 
-		// スプライト描画後処理
-		Sprite::PostDraw();
+	// スプライト描画後処理
+	Sprite::PostDraw();
 
 #pragma endregion
 }
 
 void GameScene::CheckAllCollision() {
 
-	//// 判定対象AとBの座標
-	//Vector3 posA, posB;
+	Vector3 posA, posB;
 
-	//// 自弾リストの取得
-	//const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 
+	posA = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* bullet : playerBullets) {
+
+		posB = bullet->GetWorldPosition();
+
+		float X = (posB.x - posA.x);
+		float Y = (posB.y - posA.y);
+		float Z = (posB.z - posA.z);
+
+		float center = sqrtf(X * X + Y * Y + Z * Z);
+		float R1 = 1.5f; // 自分で決める
+		float R2 = 0.5f; // 自分で決める
+		float RR = (R1 + R2);
+
+		if (center <= (RR * RR)) {
+			// 敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision();
+			// 自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+
+			ImGui::Begin("a");
+			ImGui::End();
+
+			EnemyLife--;
+
+		}
+	}
 }
-

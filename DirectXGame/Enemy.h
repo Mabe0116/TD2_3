@@ -18,8 +18,6 @@ public:
 	// 親となるワールドトランスフォーム
 	void SetParent(const WorldTransform* parent);
 
-	Vector3 GetWorldPosition();
-
 private:
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
