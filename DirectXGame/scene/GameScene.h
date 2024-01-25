@@ -112,21 +112,18 @@ private: // メンバ変数
 
 	private:
 	//サウンドデータハンドル
-	uint32_t TitleSound_ = 0;
-	uint32_t OperationSound_ = 0;
-	//uint32_t ClearSound_ = 0;
+	uint32_t GameSound_ = 0;
+	
 
 
 	//音声再生ハンドル
-	uint32_t Titlevoice_ = 0;
-	uint32_t Operationvoice_ = 0;
+	uint32_t Gamevoice_ = 0;
+	
 
 	uint32_t voiceHandle_ = 0;
 
 
-	/*std::unique_ptr<Audio> TitleAudio_ = nullptr;
-	std::unique_ptr<Audio> OperationSound_ = nullptr;
-	std::unique_ptr<Audio> ClearSound_ = nullptr;*/
+	
 
 	/// <summary>
 	/// ゲームシーン用

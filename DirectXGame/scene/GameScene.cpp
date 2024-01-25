@@ -36,14 +36,7 @@ void GameScene::Initialize() {
 
 
 	//サウンド読み込み
-	TitleSound_ = audio_->LoadWave("fanfare.wav");
-	OperationSound_ = audio_->LoadWave("mokugyo.wav");
-	//ClearSound_ = audio_->LoadWave("");
-
-	//音声再生
-	/*audio_->PlayWave(TitleSound_);
-	audio_->PlayWave(OperationSound_);*/
-
+	GameSound_ = audio_->LoadWave("game.wav");
 
 
 
@@ -104,53 +97,50 @@ void GameScene::Initialize() {
 
 	ground_->Initialize(modelGround_);
 
-	audio_->PlayWave(TitleSound_);
-	//audio_->PlayWave(OperationSound_);
+
+	
 
 
-	Titlevoice_ = audio_->PlayWave(TitleSound_, true);
-	Operationvoice_ = audio_->PlayWave(OperationSound_, false);
 }
 
 void GameScene::Update() {
 
 	switch (scene) {
 	case GameScene::TITLE: // タイトルシーン
+
+		audio_->StopWave(Gamevoice_);
+	
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
 
 					scene = OPERATION;
-					if (scene == OPERATION) {
-						audio_->StopWave(Titlevoice_);
-					}
 				}
 			}
 		}
 		break;
 
 	case GameScene::OPERATION: // 操作説明
-		if (scene == OPERATION) {
-		    Operationvoice_ = audio_->PlayWave(OperationSound_, true);
-		}
-		if (!audio_->IsPlaying(Operationvoice_)) {
-			Operationvoice_ = audio_->PlayWave(Operationvoice_, true, 0.5f);
-		}
+		
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
 					scene = GAME;
-					if (scene == GAME) {
-						audio_->StopWave(Operationvoice_);
-					}
 				}
 			}
 		}
 		break;
 
 	case GameScene::GAME:
+
+		if (!audio_->IsPlaying(voiceHandle_)) {
+			voiceHandle_ = audio_->PlayWave(Gamevoice_, true, 0.5);
+		
+		}
+
+		audio_->ResumeWave(voiceHandle_);
 
 		// 自キャラの更新
 		player_->Update();
@@ -160,6 +150,7 @@ void GameScene::Update() {
 		// デバッグカメラの更新
 		debugCamera_->Update();
 
+			
 #ifdef _DEBUG
 		if (input_->TriggerKey(DIK_RETURN)) {
 			isDebugCameraActive_ = true;
