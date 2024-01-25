@@ -2,8 +2,6 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include"SuitableBullet.h"
-#include"Trackingbullet.h"
 
 class Enemy {
 public:
@@ -15,13 +13,6 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
-	//攻撃
-	void SecondAttack();
-	void ThirdAttack();
-
-	//
-	//const std::list<LotEnemy*>& GetLotEnemys() const { return enemyNums_; }
-
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
 	// 親となるワールドトランスフォーム
@@ -30,19 +21,10 @@ public:
 	Vector3 GetWorldPosition();
 
 private:
-	//行動フェーズ
-	enum class Phase {
-		First,//1
-		Second,//2
-		Third,//3
-		Final,//頭
-	};
-
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 
 	// ワールド変換データ
-	WorldTransform worldTransform_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;
 	WorldTransform worldTransformBody2_;
@@ -52,8 +34,4 @@ private:
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
-
-	//フェーズ
-	Phase phase_ = Phase::First;
-	//Phase phase_ = Phase::Final;
 };
