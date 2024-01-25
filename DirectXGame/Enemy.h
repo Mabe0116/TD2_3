@@ -4,6 +4,7 @@
 #include "WorldTransform.h"
 #include"SuitableBullet.h"
 #include"Trackingbullet.h"
+#include"Input.h"
 
 class Enemy {
 public:
@@ -20,9 +21,9 @@ public:
 	void ThirdAttack();
 
 	//追尾
-	const std::list<Trackingbullet*>& GetSuitableBullet() const { return trackingbullet_; } 
+	const std::list<Trackingbullet*>& GetSuitableBullet() const { return trackingbulletNums_; } 
 	// 複数
-	const std::list<SuitableBullet*>& GetTrackingbullet() const { return suitableBullet_; }
+	const std::list<SuitableBullet*>& GetTrackingbullet() const { return suitableBulletNums_; }
 
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
@@ -37,6 +38,8 @@ private:
 		Third,//3
 		Final,//頭
 	};
+
+	Input* input_ = nullptr;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
@@ -58,10 +61,11 @@ private:
 
 	//フェーズ
 	Phase phase_;
+	//Phase phase_ = Phase::Final;
 
 	// 敵複数
-	std ::list<Trackingbullet*> trackingbullet_;
-	std ::list<SuitableBullet*> suitableBullet_;
+	std ::list<Trackingbullet*> trackingbulletNums_;
+	std ::list<SuitableBullet*> suitableBulletNums_;
 
 	//敵回転
 	float RotateSpeed;

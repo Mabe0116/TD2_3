@@ -14,7 +14,7 @@ void Trackingbullet::Initialize(Model* bullet_) {
 
 void Trackingbullet::Update() { worldTransform_.UpdateMatrix(); }
 
-void Trackingbullet::Draw(ViewProjection& viewProjection_) {
-	// 3Dモデルを描画
-	model_->Draw(worldTransform_, viewProjection_);
-}
+//void Trackingbullet::Draw(ViewProjection& viewProjection_) {
+//	// 3Dモデルを描画
+//	model_->Draw(worldTransform_, viewProjection_);
+//}

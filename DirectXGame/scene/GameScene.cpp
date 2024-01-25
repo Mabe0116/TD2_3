@@ -69,10 +69,10 @@ void GameScene::Initialize() {
 	// 敵キャラの生成
 	enemy_ = std::make_unique<Enemy>();
 	// 3Dモデルの生成
-	modelEnemyHead_.reset(Model::CreateFromOBJ("player_Head", true));
-	modelEnemyBody1_.reset(Model::CreateFromOBJ("player_Body1", true));
-	modelEnemyBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
-	modelEnemyBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
+	modelEnemyHead_.reset(Model::CreateFromOBJ("Enemy_Head", true));
+	modelEnemyBody1_.reset(Model::CreateFromOBJ("Enemy_Body1", true));
+	modelEnemyBody2_.reset(Model::CreateFromOBJ("Enemy_Body2", true));
+	modelEnemyBody3_.reset(Model::CreateFromOBJ("Enemy_Body3", true));
 	// 敵キャラの初期化
 	enemy_->Initialize(
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
@@ -83,7 +83,7 @@ void GameScene::Initialize() {
 	//追尾
 	//trackingBullet_ = std::make_unique<Trackingbullet>();
 	// 3Dモデルの生成
-	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
+//	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
 	// 追尾弾の初期化
 	//trackingBullet_->Initialize(modelTrackingBullet_.get());
 
@@ -251,7 +251,7 @@ void GameScene::Draw() {
 		enemy_->Draw(viewProjection_);
 		// 敵の弾の描画
 		//trackingBullet_->Draw(viewProjection_);
-		suitableBullet_->Draw(viewProjection_);
+		//suitableBullet_->Draw(viewProjection_);
 	}
 
 		// 3Dオブジェクト描画後処理

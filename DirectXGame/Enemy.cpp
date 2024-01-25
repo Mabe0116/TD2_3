@@ -1,6 +1,7 @@
 ﻿#include "Enemy.h"
 #include <Mymath.h>
 #include <cassert>
+#include <ImGuiManager.h>
 
 Enemy::~Enemy() {
 }
@@ -45,47 +46,50 @@ void Enemy::Initialize(
 	worldTransformBody3_.translation_ = {0, 0, 0};
 
 	RotateSpeed = 0.1f;
-	SuitableTiming = 20;
+	SuitableTiming = 0;
 	
-	phase_ = Phase::Second;
-	//phase_ = Phase::First;
+phase_ = Phase::Second;
+//	phase_ = Phase::First;
 
 	}
 
 void Enemy::Update() {
 
-	switch (phase_) {
-	case Phase::First:
+	//switch (phase_) {
+	//case Phase::First:
 
-			break;
-	case Phase::Second:
-		    SecondAttack();
+	//		break;
+	//case Phase::Second:
+	//	    SecondAttack();
+	//		 for (SuitableBullet* suitablenum : suitableBullet_) {
+	//		    if (suitablenum) {
+	//			    // 複数弾の更新
+	//			    suitablenum->Update();
+	//		    }
+	//	    }
+	//	    break;
+	//case Phase::Third:
+	//	    ThirdAttack();
+	//	    break;
+	//case Phase::Final:
+	//	    SecondAttack(); 
+	//		ThirdAttack();
+	//	break;
+	//}
 
-			 //for (SuitableBullet* suitablenum : suitableBullet_) {
-			 //   if (suitablenum) {
-				//    // 複数弾の更新
-				//    suitablenum->Update();
-			 //   }
-		  //  }
-		    break;
-	case Phase::Third:
-		    ThirdAttack();
-		    break;
-	case Phase::Final:
-		    SecondAttack(); 
-			ThirdAttack();
-		break;
-	}
+	  SecondAttack();
 
-	
-
-	worldTransform_.UpdateMatrix();
+worldTransform_.UpdateMatrix();
 	worldTransformHead_.UpdateMatrix();
 	worldTransformBody1_.UpdateMatrix();
 	worldTransformBody2_.UpdateMatrix();
 	worldTransformBody3_.UpdateMatrix();
 	//弾
-	//worldTransformSuitable_.UpdateMatrix();
+	worldTransformSuitable_.UpdateMatrix();
+
+		ImGui::Begin("window");
+	ImGui::DragFloat("count", &SuitableTiming);
+	ImGui::End();
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
@@ -95,37 +99,39 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	  headModel_->Draw(worldTransformHead_, viewProjection);
 	 }
 	if (phase_ == Phase::First || phase_ == Phase::Second||phase_ == Phase::Third) {
- 	    bodyModel3_->Draw(worldTransformBody3_, viewProjection);
+	   bodyModel1_->Draw(worldTransformBody1_, viewProjection);
      }
 	 if (phase_ == Phase::First || phase_ == Phase::Second) {
 	  bodyModel2_->Draw(worldTransformBody2_, viewProjection);
 	 }
 	 if (phase_ == Phase::First) {
-	 	    bodyModel1_->Draw(worldTransformBody1_, viewProjection);
+	  bodyModel3_->Draw(worldTransformBody3_, viewProjection);
 	 }
 	 // 複数弾の描画複数
-	 for (SuitableBullet* suitablenum : suitableBullet_) {
+	 for (SuitableBullet* suitablenum : suitableBulletNums_) {
 		    suitablenum->Draw(viewProjection);
 	 }
 }
 
 void Enemy::SecondAttack() {
-		    Vector3 velocity(0.2f, 0, 0.2f);
+		  
 		    worldTransform_.rotation_.y += RotateSpeed;
-		    SuitableTiming--;
+		    SuitableTiming++;
 	
-	 for (SuitableBullet* suitablenum : suitableBullet_) {
+	 for (SuitableBullet* suitablenum : suitableBulletNums_) {
 		    // 複数弾の更新
 		    suitablenum->Update();
-		    if (SuitableTiming <= 0) {
-			    // 速度ベクトルを自機に向きに合わせて回転させる
+		    if (SuitableTiming >=20) {
+			    Vector3 velocity(0.2f, 0, 0.2f);
+			    // 速度ベクトルを自機の向きに合わせて回転させる
 			    velocity = TransformNormal(velocity, worldTransformSuitable_.matWorld_);
 			    // 複数弾の生成
-			    SuitableBullet* newSuitablenum = new SuitableBullet();
-			    suitablenum->Initialize(SuitableModel, worldTransformSuitable_.translation_, velocity);
+			 //   SuitableBullet* newSuitablenum = new SuitableBullet();
+			    suitablenum->Initialize(
+			        SuitableModel, worldTransformSuitable_.translation_, velocity);
 			    // 複数弾の登録
-			    suitableBullet_.push_back(newSuitablenum);
-			    SuitableTiming = 20;
+			    suitableBulletNums_.push_back(suitablenum);
+			    SuitableTiming = 0;
 		    }
 	 }
 }
