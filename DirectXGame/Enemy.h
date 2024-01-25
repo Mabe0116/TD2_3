@@ -9,7 +9,7 @@ class Enemy {
 public:
 	~Enemy();
 
-	void Initialize(Model* head, Model* body1, Model* body2, Model* body3);
+	void Initialize(Model* head, Model* body1, Model* body2, Model* body3/*, Model* modelSuitable*/);
 
 	void Update();
 
@@ -19,8 +19,10 @@ public:
 	void SecondAttack();
 	void ThirdAttack();
 
-	//
-	//const std::list<LotEnemy*>& GetLotEnemys() const { return enemyNums_; }
+	//追尾
+	const std::list<Trackingbullet*>& GetSuitableBullet() const { return trackingbullet_; } 
+	// 複数
+	const std::list<SuitableBullet*>& GetTrackingbullet() const { return suitableBullet_; }
 
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
@@ -45,13 +47,29 @@ private:
 	WorldTransform worldTransformBody1_;
 	WorldTransform worldTransformBody2_;
 	WorldTransform worldTransformBody3_;
+	// 弾ワールド変換データ
+	WorldTransform worldTransformSuitable_;
 	// モデル
 	Model* headModel_ = nullptr;
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
+	//Model* modelSuitable_=nullptr;
 
 	//フェーズ
-	Phase phase_ = Phase::First;
-	//Phase phase_ = Phase::Final;
+	Phase phase_;
+
+	// 敵複数
+	std ::list<Trackingbullet*> trackingbullet_;
+	std ::list<SuitableBullet*> suitableBullet_;
+
+	//敵回転
+	float RotateSpeed;
+	//弾の出るタイミング
+	float TrackingTiming;
+	float SuitableTiming;
+	//弾のモデル
+	Model* TrackingModel;
+	Model* SuitableModel;
+	Vector3 suitableposition;
 };

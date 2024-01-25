@@ -128,6 +128,8 @@ private: // メンバ変数
 	XINPUT_STATE joyState;
 	XINPUT_STATE prevjoyState;
 
+	// 速度
+	Vector3 velocity_;
 
 
 	/// <summary>

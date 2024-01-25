@@ -76,23 +76,23 @@ void GameScene::Initialize() {
 	// 敵キャラの初期化
 	enemy_->Initialize(
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
-	    modelEnemyBody3_.get());
+	    modelEnemyBody3_.get()/*, modelSuitableBullet_.get()*/);
 
 
 	//敵の弾
 	//追尾
-	trackingBullet_ = std::make_unique<Trackingbullet>();
+	//trackingBullet_ = std::make_unique<Trackingbullet>();
 	// 3Dモデルの生成
 	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
 	// 追尾弾の初期化
-	trackingBullet_->Initialize(modelTrackingBullet_.get());
+	//trackingBullet_->Initialize(modelTrackingBullet_.get());
 
 	//複数
 	suitableBullet_ = std::make_unique<SuitableBullet>();
 	// 3Dモデルの生成
 	modelSuitableBullet_.reset(Model::CreateFromOBJ("bullet", true));
 	// 複数弾の初期化
-	suitableBullet_->Initialize(modelSuitableBullet_.get());
+	suitableBullet_->Initialize(modelSuitableBullet_.get(),worldTransform_.translation_,velocity_);
 
 
 	// デバッグカメラの生成
@@ -137,6 +137,11 @@ void GameScene::Update() {
 				}
 			}
 		}
+			//コントローラー忘れた
+			if (input_->TriggerKey(DIK_SPACE)) {
+				scene = OPERATION;
+			}
+
 		break;
 
 	case GameScene::OPERATION: // 操作説明
@@ -148,6 +153,13 @@ void GameScene::Update() {
 				}
 			}
 		}
+
+			// コントローラー忘れた
+			if (input_->TriggerKey(DIK_SPACE)) {
+				scene = GAME;
+			}
+
+	
 		break;
 	case GameScene::GAME:
 
@@ -156,9 +168,7 @@ void GameScene::Update() {
 
 	// 敵キャラの更新
 	enemy_->Update();
-	//敵弾の更新
-	trackingBullet_->Update();
-	suitableBullet_->Update();
+	
 
 	skydome_->Update();
 
@@ -240,7 +250,7 @@ void GameScene::Draw() {
 		// 敵キャラの描画
 		enemy_->Draw(viewProjection_);
 		// 敵の弾の描画
-		trackingBullet_->Draw(viewProjection_);
+		//trackingBullet_->Draw(viewProjection_);
 		suitableBullet_->Draw(viewProjection_);
 	}
 
