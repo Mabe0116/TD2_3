@@ -127,7 +127,7 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	
+
 	switch (scene) {
 
 	case GameScene::TITLE: // タイトルシーン
