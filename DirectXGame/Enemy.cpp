@@ -92,8 +92,8 @@ void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = 
 
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos; 
-	worldPos.x = worldTransformBody2_.translation_.x;
-	worldPos.y = worldTransformBody2_.translation_.y;
-	worldPos.z = worldTransformBody2_.translation_.z;
+	worldPos.x = worldTransformBody1_.matWorld_.m[3][0];
+	worldPos.y = worldTransformBody1_.matWorld_.m[3][1];
+	worldPos.z = worldTransformBody1_.matWorld_.m[3][2];
 	return worldPos;
 }

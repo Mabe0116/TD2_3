@@ -280,7 +280,7 @@ void GameScene::CheckAllCollision() {
 		float R2 = 0.5f; // 自分で決める
 		float RR = (R1 + R2);
 
-		if (center <= (RR * RR)) {
+		if (center <= RR) {
 			// 敵キャラの衝突時コールバックを呼び出す
 			enemy_->OnCollision();
 			// 自弾の衝突時コールバックを呼び出す

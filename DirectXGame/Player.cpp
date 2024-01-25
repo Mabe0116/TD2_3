@@ -140,7 +140,7 @@ void Player::Attack() {
 				const float kBulletSpeed = 1.0f;
 				Vector3 sub =
 				    Subtract(enemy_->GetWorldTransform().translation_, GetWorldPosition());
-				sub.y += 5.0f;
+				/*sub.y += 5.0f;*/
 				sub = Normalize(sub);
 				Vector3 velocity{};
 				velocity.x = sub.x * kBulletSpeed;
