@@ -66,10 +66,39 @@ void GameScene::Initialize() {
 	modelPlayerBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
 	modelPlayerBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
 
+	modelPlayerBullet_.reset(Model::CreateFromOBJ("PlayerBullet1", true));
+
 	// 自キャラの初期化
 	player_->Initialize(
 	    modelPlayerHead_.get(), modelPlayerBody1_.get(), modelPlayerBody2_.get(),
-	    modelPlayerBody3_.get());
+	    modelPlayerBody3_.get(), modelPlayerBullet_.get());
+
+	// 敵キャラの生成
+	enemy_ = std::make_unique<Enemy>();
+	// 3Dモデルの生成
+	modelEnemyHead_.reset(Model::CreateFromOBJ("player_Head", true));
+	modelEnemyBody1_.reset(Model::CreateFromOBJ("player_Body1", true));
+	modelEnemyBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
+	modelEnemyBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
+	// 敵キャラの初期化
+	enemy_->Initialize(
+	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
+	    modelEnemyBody3_.get());
+	
+	// 敵の弾
+	// 追尾
+	trackingBullet_ = std::make_unique<Trackingbullet>();
+	// 3Dモデルの生成
+	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
+	// 追尾弾の初期化
+	trackingBullet_->Initialize(modelTrackingBullet_.get());
+
+	// 複数
+	suitableBullet_ = std::make_unique<SuitableBullet>();
+	// 3Dモデルの生成
+	modelSuitableBullet_.reset(Model::CreateFromOBJ("bullet", true));
+	// 複数弾の初期化
+	suitableBullet_->Initialize(modelSuitableBullet_.get());
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -104,7 +133,7 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-
+	
 	switch (scene) {
 	case GameScene::TITLE: // タイトルシーン
 
@@ -145,6 +174,13 @@ void GameScene::Update() {
 		// 自キャラの更新
 		player_->Update();
 
+	// 敵キャラの更新
+	enemy_->Update();
+
+	//敵弾の更新
+	trackingBullet_->Update();
+	suitableBullet_->Update();
+
 		skydome_->Update();
 
 		// デバッグカメラの更新
@@ -172,6 +208,10 @@ void GameScene::Update() {
 		};
 		break;
 	}
+
+	
+
+	CheckAllCollision();
 }
 
 void GameScene::Draw() {
@@ -187,7 +227,6 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
-
 	if (scene == TITLE) {
 		TitleSprite_->Draw();
 	}
@@ -197,7 +236,6 @@ void GameScene::Draw() {
 	if (scene == CLEAR) {
 		ClearSprite_->Draw();
 	}
-
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -221,7 +259,13 @@ void GameScene::Draw() {
 
 		// 自キャラの描画
 		player_->Draw(viewProjection_);
+		// 敵キャラの描画
+		enemy_->Draw(viewProjection_);
+		// 敵の弾の描画
+		trackingBullet_->Draw(viewProjection_);
+		suitableBullet_->Draw(viewProjection_);
 	}
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -238,4 +282,13 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollision() {
+
+	//// 判定対象AとBの座標
+	// Vector3 posA, posB;
+
+	//// 自弾リストの取得
+	// const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 }

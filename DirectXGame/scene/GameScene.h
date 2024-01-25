@@ -2,6 +2,7 @@
 
 #include "Audio.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
 #include "FollowCamera.h"
 #include "Input.h"
 #include "Model.h"
@@ -13,6 +14,8 @@
 #include <memory>
 #include "Skydome.h"
 #include "Ground.h"
+#include "SuitableBullet.h"
+#include "Trackingbullet.h"
 
 /// <summary>
 /// ゲームシーン
@@ -45,6 +48,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void CheckAllCollision();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -75,6 +80,22 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelPlayerBody2_;
 	std::unique_ptr<Model> modelPlayerBody3_;
 
+	// 敵キャラ
+	std::unique_ptr<Enemy> enemy_;
+	// 3Dモデル
+	std::unique_ptr<Model> modelEnemyHead_;
+	std::unique_ptr<Model> modelEnemyBody1_;
+	std::unique_ptr<Model> modelEnemyBody2_;
+	std::unique_ptr<Model> modelEnemyBody3_;
+
+	//敵の弾
+	//追尾
+	std::unique_ptr<Trackingbullet> trackingBullet_;
+	std::unique_ptr<Model> modelTrackingBullet_;
+	//複数
+	std::unique_ptr<SuitableBullet> suitableBullet_;
+	std::unique_ptr<Model> modelSuitableBullet_;
+
 	Skydome* skydome_ = nullptr;
 
 	Model* modelSkydome_ = nullptr;
@@ -82,7 +103,11 @@ private: // メンバ変数
 	Ground* ground_ = nullptr;
 
 	Model* modelGround_ = nullptr;
+	
+	//ライフ
+	uint32_t LifeHandle_;
 
+	int EnemyLife = 5;
 
 	private:
 	//シーン切り替え
@@ -109,6 +134,7 @@ private: // メンバ変数
 	XINPUT_STATE joyState;
 	XINPUT_STATE prevjoyState;
 
+	std::unique_ptr<Model> modelPlayerBullet_;
 
 	private:
 	//サウンドデータハンドル
