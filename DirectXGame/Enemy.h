@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "EnemyBullet.h"
 
 class Enemy {
 public:
@@ -37,6 +38,9 @@ private:
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
+
+	// 敵キャラ
+	std::unique_ptr<EnemyBullet> enemyBullet_;
 
 	// デスフラグ
 	bool isDead_ = false;
