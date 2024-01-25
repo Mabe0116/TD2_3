@@ -79,6 +79,10 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	 }
 }
 
+void Enemy::OnCollision() { isDead_ = true; }
+
+
+
 void Enemy::SecondAttack() {}
 
 void Enemy::ThirdAttack() {}

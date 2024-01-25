@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "Model.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
 #include "PlayerBullet.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
 #include <XInput.h>
 
 // 前方宣言
@@ -10,7 +10,7 @@ class Enemy;
 
 class Player {
 public:
-	void Initialize(Model* head, Model* body1, Model* body2, Model* body3,Model* PlayerBullet);
+	void Initialize(Model* head, Model* body1, Model* body2, Model* body3, Model* PlayerBullet);
 
 	void Update();
 
@@ -40,6 +40,7 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 
 	// ワールド変換データ
+	WorldTransform worldTransform_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;
 	WorldTransform worldTransformBody2_;
