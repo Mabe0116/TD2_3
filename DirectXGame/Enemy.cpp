@@ -57,3 +57,5 @@ Vector3 Enemy::GetWorldPosition() {
 	worldPos.z = worldTransformBody2_.translation_.z;
 	return worldPos;
 }
+
+void Enemy::OnCollision() { isDead_ = true; }

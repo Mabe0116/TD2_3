@@ -18,6 +18,11 @@ public:
 	// 親となるワールドトランスフォーム
 	void SetParent(const WorldTransform* parent);
 
+	// 当たり判定
+	void OnCollision();
+
+	Vector3 GetWorldPosition();
+
 private:
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
@@ -32,4 +37,7 @@ private:
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 };
