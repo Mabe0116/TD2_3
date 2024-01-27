@@ -61,7 +61,7 @@ void Player::Update() {
 	worldTransformHead_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
 	worldTransformBody1_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
 	worldTransformBody2_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
-	worldTransformBody3_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z); 
+	worldTransformBody3_.rotation_.y = std::atan2(DiffVector.x, DiffVector.z);
 
 	// ゲームパッドが有効の場合if文が通る
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {

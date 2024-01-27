@@ -14,6 +14,8 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
+	void Fire();
+
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
 	// 親となるワールドトランスフォーム
@@ -23,6 +25,9 @@ public:
 	void OnCollision();
 
 	Vector3 GetWorldPosition();
+
+	// 発射間隔
+	static const int kFireInterval = 60;
 
 private:
 	// カメラのビュープロジェクション
@@ -38,10 +43,14 @@ private:
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
+	Model* bulletModel_ = nullptr;
 
-	// 敵キャラ
-	std::unique_ptr<EnemyBullet> enemyBullet_;
+	// 敵の弾
+	std::list<EnemyBullet*> bullets_;
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	// 発射タイマー
+	int32_t fireTimer_ = 0;
 };
