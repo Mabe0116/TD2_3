@@ -26,13 +26,24 @@ void Enemy::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 	// ボディ3の親をヘッドにする
 	worldTransformBody3_.parent_ = &worldTransformHead_;
 
-	worldTransformHead_.translation_ = {0, 3.0f, 0};
+	worldTransformHead_.translation_ = {0, 2.0f, 0};
 	worldTransformBody1_.translation_ = {0, 0, 0};
 	worldTransformBody2_.translation_ = {0, 0, 0};
 	worldTransformBody3_.translation_ = {0, 0, 0};
 }
 
 void Enemy::Update() {
+	if (isDelete_ == true) {
+		const float kAcceleration = -0.02f;
+		velocity_.y += kAcceleration;
+		worldTransformHead_.translation_.y += velocity_.y;
+
+		if (worldTransformHead_.translation_.y <= 0.0f) {
+			velocity_ = {0.0f, 0.0f, 0.0f};
+			worldTransformHead_.translation_.y = 0.0f;
+		}
+	}
+
 	worldTransformHead_.UpdateMatrix();
 	worldTransformBody1_.UpdateMatrix();
 	worldTransformBody2_.UpdateMatrix();
@@ -44,7 +55,11 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	 headModel_->Draw(worldTransformHead_, viewProjection);
  	 bodyModel3_->Draw(worldTransformBody3_, viewProjection);
 	 bodyModel2_->Draw(worldTransformBody2_, viewProjection);	 	    
-	 bodyModel1_->Draw(worldTransformBody1_, viewProjection);
+	 
+
+	 if (isDelete_ == false) {
+		 bodyModel1_->Draw(worldTransformBody1_, viewProjection);
+	 }
 }
 
 // 親子関係を結ぶ
@@ -58,4 +73,9 @@ Vector3 Enemy::GetWorldPosition() {
 	return worldPos;
 }
 
-void Enemy::OnCollision() { isDead_ = true; }
+void Enemy::OnCollision() { 
+	isDead_ = true;
+
+	isDelete_ = true;
+
+}

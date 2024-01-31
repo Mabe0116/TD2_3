@@ -44,4 +44,8 @@ private:
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	bool isDelete_ = false;
+
+	Vector3 velocity_{};
 };
