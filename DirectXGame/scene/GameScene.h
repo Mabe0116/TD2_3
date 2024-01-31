@@ -124,11 +124,13 @@ private: // メンバ変数
 	uint32_t TitleTexture_ = 0;
 	uint32_t OperationTexture_ = 0;
 	uint32_t ClearTexture_ = 0;
+	uint32_t GameOperationTexture_ = 0;
 
 	//シーン画面のスプライト
 	std::unique_ptr<Sprite> TitleSprite_ = nullptr;
 	std::unique_ptr<Sprite> OperationSprite_ = nullptr;
 	std::unique_ptr<Sprite> ClearSprite_ = nullptr;
+	std::unique_ptr<Sprite> GameOperationSprite_ = nullptr;
 
 	//ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;

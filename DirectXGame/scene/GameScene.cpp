@@ -25,15 +25,17 @@ void GameScene::Initialize() {
 	TitleTexture_ = TextureManager::Load("scene/title.png");
 	OperationTexture_ = TextureManager::Load("scene/operation.png");
 	ClearTexture_ = TextureManager::Load("scene/clear.png");
+	GameOperationTexture_ = TextureManager::Load("scene/gameoperation.png");
 
 	TitleSprite_ = std::make_unique<Sprite>();
 	OperationSprite_ = std::make_unique<Sprite>();
 	ClearSprite_ = std::make_unique<Sprite>();
+	GameOperationSprite_ = std::make_unique<Sprite>();
 
 	TitleSprite_.reset(Sprite::Create(TitleTexture_, {0, 0}));
 	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
-
+	GameOperationSprite_.reset(Sprite::Create(GameOperationTexture_, {900, 500}));
 
 	//サウンド読み込み
 	GameSound_ = audio_->LoadWave("game.wav");
@@ -233,9 +235,11 @@ void GameScene::Draw() {
 	if (scene == OPERATION) {
 		OperationSprite_->Draw();
 	}
+	
 	if (scene == CLEAR) {
 		ClearSprite_->Draw();
 	}
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -252,7 +256,7 @@ void GameScene::Draw() {
 		skydome_->Draw(viewProjection_);
 
 		ground_->Draw(viewProjection_);
-
+		
 		/// <summary>
 		/// ここに3Dオブジェクトの描画処理を追加できる
 		/// </summary>
@@ -264,6 +268,7 @@ void GameScene::Draw() {
 		// 敵の弾の描画
 		trackingBullet_->Draw(viewProjection_);
 		suitableBullet_->Draw(viewProjection_);
+		
 	}
 
 	// 3Dオブジェクト描画後処理
@@ -277,6 +282,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	if (scene == GAME) {
+		GameOperationSprite_->Draw();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
