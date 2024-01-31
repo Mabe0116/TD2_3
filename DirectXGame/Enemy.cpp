@@ -57,6 +57,7 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	 bodyModel2_->Draw(worldTransformBody2_, viewProjection);	 	    
 	 
 
+
 	 if (isDelete_ == false) {
 		 bodyModel1_->Draw(worldTransformBody1_, viewProjection);
 	 }
