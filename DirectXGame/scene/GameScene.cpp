@@ -26,16 +26,19 @@ void GameScene::Initialize() {
 	OperationTexture_ = TextureManager::Load("scene/operation.png");
 	ClearTexture_ = TextureManager::Load("scene/clear.png");
 	GameOperationTexture_ = TextureManager::Load("scene/gameoperation.png");
+	GameOverTexture_ = TextureManager::Load("scene/gameover.png");
 
 	TitleSprite_ = std::make_unique<Sprite>();
 	OperationSprite_ = std::make_unique<Sprite>();
 	ClearSprite_ = std::make_unique<Sprite>();
 	GameOperationSprite_ = std::make_unique<Sprite>();
+	GameOverSprite_ = std::make_unique<Sprite>();
 
 	TitleSprite_.reset(Sprite::Create(TitleTexture_, {0, 0}));
 	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
 	GameOperationSprite_.reset(Sprite::Create(GameOperationTexture_, {900, 500}));
+	GameOverSprite_.reset(Sprite::Create(GameOverTexture_, {0, 0}));
 
 	//サウンド読み込み
 	GameSound_ = audio_->LoadWave("game.wav");
@@ -207,9 +210,66 @@ void GameScene::Update() {
 			viewProjection_.matProjection = followCamera_->GetViewProjection().matProjection;
 			viewProjection_.matView = followCamera_->GetViewProjection().matView;
 			viewProjection_.TransferMatrix();
+
+			//Gameoverにいく
+				if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+				if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+					if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+					    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+
+						scene = GAMEOVER;
+					}
+				}
+			}
+
+
+
+				// Gameclearにいく
+			if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+				if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+					if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B &&
+					    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_B)) {
+
+						scene = CLEAR;
+					}
+				}
+			}
+
+
 		};
 		break;
+
+
+		case GameScene::GAMEOVER:
+			//
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = TITLE;
+				}
+			}
+		}
+		break;
+
+
+		case GameScene::CLEAR:
+		//
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = TITLE;
+				}
+			}
+		}
+		break;
+
+
+
 	}
+
+	
 
 	
 
@@ -240,6 +300,9 @@ void GameScene::Draw() {
 		ClearSprite_->Draw();
 	}
 
+	if (scene == GAMEOVER) {
+		GameOverSprite_->Draw();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
