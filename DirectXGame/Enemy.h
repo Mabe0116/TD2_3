@@ -28,6 +28,8 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	float GetworldRotY();
+
 	//攻撃
 	void SecondAttack();
 

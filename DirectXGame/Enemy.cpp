@@ -32,6 +32,7 @@ void Enemy::Initialize(
 	worldTransformBody2_.Initialize();
 	worldTransformBody3_.Initialize();
 
+	worldTransform_.rotation_.y = 0;
 	worldTransform_.scale_ = {3, 3, 3};
 	//弾
 	worldTransformSuitable_.Initialize();
@@ -73,7 +74,7 @@ void Enemy::Initialize(
 	fireTimer_ = kFireInterval;
 	// 自キャラの生成
 	//player_ = std::make_unique<Player>();
-phase_ = Phase::Final;
+phase_ = Phase::Third;
 }
 
 void Enemy::Update() {
@@ -131,7 +132,7 @@ void Enemy::Update() {
 		 worldTransform_.translation_.y =-8;
 		//複数弾の攻撃
 		// 複数弾の回転
-		worldTransformHead_.rotation_.y += RotateSpeed;
+		worldTransformSuitable_.rotation_.y += RotateSpeed;
 		// 複数弾のタイマー
 		SuitableTiming--;
 		if (SuitableTiming <= 0) {
@@ -160,7 +161,7 @@ void Enemy::Update() {
 		break;
 	}
 	ImGui::Begin("window");
-	ImGui::DragFloat3("enemy", &worldTransform_.translation_.x);
+	ImGui::DragFloat("enemy", &worldTransform_.rotation_.y);
 	ImGui::End();
 		
 
@@ -228,29 +229,31 @@ void Enemy::SecondAttack() {
 
 void Enemy::Fire() {
 
-	assert(player_);
+	            assert(player_);
 
-	// 弾の速度
-	 const float kBulletSpeed = -1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
-	
-	 Vector3 playerPos = player_->GetWorldPosition();
-	 Vector3 enemyPos = this->GetWorldPosition();
-	 Vector3 DiffVector = Subtract(enemyPos, playerPos);
-	 velocity = Normalize(DiffVector);
-	 velocity.x *= kBulletSpeed;
-	 velocity.y *= kBulletSpeed;
-	 velocity.z *= kBulletSpeed;
+	            // 弾の速度
+	            const Vector3 kBulletSpeed = {-1.0f, 0.0f, -1.0f};
+	            Vector3 velocity(kBulletSpeed.x, kBulletSpeed.y, kBulletSpeed.z);
 
-	 // 速度ベクトルを敵の向きに合わせて回転させる
-	 velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+	            Vector3 playerPos = player_->GetWorldPosition();
+	            Vector3 enemyPos = this->GetWorldPosition();
+	            Vector3 DiffVector = Subtract(enemyPos, playerPos);
+	            velocity = Normalize(DiffVector);
+	            velocity.x *= kBulletSpeed.x;
+	            velocity.y *= kBulletSpeed.y;
+	            velocity.z *= kBulletSpeed.z;
 
-	 // 弾を発生し、初期化
-	 EnemyBullet* newBullet = new EnemyBullet();
-	 newBullet->Initialize(bulletModel_, worldTransform_.translation_, velocity);
-	 // 弾を登録
-	 bullets_.push_back(newBullet);
+	            // 速度ベクトルを敵の向きに合わせて回転させる
+	            velocity = TransformNormal(velocity, worldTransformHead_.matWorld_);
+
+	            // 弾を発生し、初期化
+	            EnemyBullet* newBullet = new EnemyBullet();
+	            newBullet->Initialize(bulletModel_, worldTransformHead_.translation_, velocity);
+	            // 弾を登録
+	            bullets_.push_back(newBullet);
 }
+
+
 
 // 親子関係を結ぶ
 void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
@@ -261,6 +264,10 @@ Vector3 Enemy::GetWorldPosition() {
 	worldPos.y = worldTransformBody2_.matWorld_.m[3][1];
 	worldPos.z = worldTransformBody2_.matWorld_.m[3][2];
 	return worldPos;
+}
+
+float Enemy::GetworldRotY() {
+	{ return worldTransform_.rotation_.y; }
 }
 
 void Enemy::OnCollision() { isDead_ = true; }
