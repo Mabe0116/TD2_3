@@ -1,5 +1,6 @@
 ﻿#include "Enemy.h"
 #include <Mymath.h>
+#include "Player.h"
 #include <cassert>
 
 Enemy::~Enemy() { 
@@ -39,6 +40,8 @@ void Enemy::Initialize(Model* head, Model* body1, Model* body2, Model* body3) {
 
 	// 発射タイマーを初期化
 	fireTimer_ = kFireInterval;
+	// 自キャラの生成
+	//player_ = std::make_unique<Player>();
 }
 
 void Enemy::Update() {
@@ -86,9 +89,21 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 }
 
 void Enemy::Fire() {
+
+	assert(player_);
+
 	// 弾の速度
-	 const float kBulletSpeed = -0.1f;
-	 Vector3 velocity(0, 0, kBulletSpeed);
+	 const float kBulletSpeed = -1.0f;
+	Vector3 velocity(0, 0, kBulletSpeed);
+	
+	 Vector3 playerPos = player_->GetWorldPosition();
+	 Vector3 enemyPos = this->GetWorldPosition();
+	 Vector3 DiffVector = Subtract(enemyPos, playerPos);
+	 velocity = Normalize(DiffVector);
+	 velocity.x *= kBulletSpeed;
+	 velocity.y *= kBulletSpeed;
+	 velocity.z *= kBulletSpeed;
+
 	 // 速度ベクトルを敵の向きに合わせて回転させる
 	 velocity = TransformNormal(velocity, worldTransformHead_.matWorld_);
 
@@ -104,9 +119,9 @@ void Enemy::SetParent(const WorldTransform* parent) { worldTransformHead_.parent
 
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos; 
-	worldPos.x = worldTransformBody2_.translation_.x;
-	worldPos.y = worldTransformBody2_.translation_.y;
-	worldPos.z = worldTransformBody2_.translation_.z;
+	worldPos.x = worldTransformBody2_.matWorld_.m[3][0];
+	worldPos.y = worldTransformBody2_.matWorld_.m[3][1];
+	worldPos.z = worldTransformBody2_.matWorld_.m[3][2];
 	return worldPos;
 }
 

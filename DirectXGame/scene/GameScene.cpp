@@ -79,6 +79,9 @@ void GameScene::Initialize() {
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
 	    modelEnemyBody3_.get());
 
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_.get());
+
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
 

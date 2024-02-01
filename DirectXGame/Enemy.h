@@ -4,6 +4,9 @@
 #include "WorldTransform.h"
 #include "EnemyBullet.h"
 
+// 前方宣言
+class Player;
+
 class Enemy {
 public:
 	~Enemy();
@@ -29,10 +32,12 @@ public:
 	// 発射間隔
 	static const int kFireInterval = 60;
 
+	void SetPlayer(Player* player) { player_ = player; }
+
 private:
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
-
+	
 	// ワールド変換データ
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;
@@ -53,4 +58,7 @@ private:
 
 	// 発射タイマー
 	int32_t fireTimer_ = 0;
+
+	// 自キャラ
+	Player* player_;
 };
