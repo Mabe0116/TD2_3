@@ -87,13 +87,6 @@ void GameScene::Initialize() {
 
 
 	//敵の弾
-	//追尾
-	//trackingBullet_ = std::make_unique<Trackingbullet>();
-	// 3Dモデルの生成
-	//modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
-	// 追尾弾の初期化
-	//trackingBullet_->Initialize(modelTrackingBullet_.get());
-
 	//複数
 	//suitableBullet_ = std::make_unique<SuitableBullet>();
 	// 3Dモデルの生成
@@ -272,9 +265,6 @@ void GameScene::Draw() {
 		player_->Draw(viewProjection_);
 		// 敵キャラの描画
 		enemy_->Draw(viewProjection_);
-		// 敵の弾の描画
-		//trackingBullet_->Draw(viewProjection_);
-		//suitableBullet_->Draw(viewProjection_);
 	}
 
 	// 3Dオブジェクト描画後処理

@@ -28,6 +28,8 @@ void Enemy::Initialize(
 	worldTransformBody1_.Initialize();
 	worldTransformBody2_.Initialize();
 	worldTransformBody3_.Initialize();
+
+	worldTransform_.scale_ = {3, 3, 3};
 	//弾
 	worldTransformSuitable_.Initialize();
 	//親子関係これでいろんなところに打てた
@@ -53,51 +55,43 @@ void Enemy::Initialize(
 
 	RotateSpeed = 0.1f;
 	//タイマー初期化
-	SuitableTiming = FireInterval;
-	TrackingTiming = FireInterval;
+	SuitableTiming = SuitableInterval;
 	
-//phase_ = Phase::Second;
+phase_ = Phase::Second;
 //	phase_ = Phase::First;
 }
 
 void Enemy::Update() {
 
 	
-	//switch (phase_) {
-	//case Phase::First:
-	//default:
+	switch (phase_) {
+	case Phase::First:
+	default:
 
-	//		break;
-	//case Phase::Second:
-	//	    SecondAttack();
-	//	    SuitableTiming++; 
-	//		 for (SuitableBullet* suitablenum : suitableBulletNums_) {
-	//		    if (suitablenum) {
-	//			    // 複数弾の更新
-	//			    suitablenum->Update();
-	//		    }
-	//	    }
-	//	    break;
-	//case Phase::Third:
-	//	    //ThirdAttack();
-	//	    break;
-	//case Phase::Final:
-	//	    //SecondAttack(); 
-	//		//ThirdAttack();
-	//	break;
-	//}
+			break;
+	case Phase::Second:
+		    // 敵回転
+		    worldTransform_.rotation_.y += RotateSpeed;
+		    // 複数弾のタイマー
+		    SuitableTiming--;
+		    if (SuitableTiming <= 0) {
+			    SecondAttack();
+		    }
+		    for (SuitableBullet* suitablenum : suitableBulletNums_) {
+			    // 複数弾の更新
+			    suitablenum->Update();
+		    }
+		    break;
+	case Phase::Third:
+		    //ThirdAttack();
+		    break;
+	case Phase::Final:
+		    //SecondAttack(); 
+			//ThirdAttack();
+		break;
+	}
 
-	//敵回転
-	 worldTransform_.rotation_.y += RotateSpeed;
-	//複数弾のタイマー
-	 SuitableTiming--;
-	if (SuitableTiming <= 0) {
-		SecondAttack();
-	}
-	for (SuitableBullet* suitablenum : suitableBulletNums_) {
-		// 複数弾の更新
-		suitablenum->Update();
-	}
+	
 
 	// デスフラグの経った敵の削除
 	suitableBulletNums_.remove_if([](SuitableBullet* enemynum) {
@@ -154,7 +148,7 @@ void Enemy::SecondAttack() {
 				// 複数弾の登録
 			   suitableBulletNums_.push_back(newSuitableBullet);
 				//タイマー初期化
-			    SuitableTiming =FireInterval ;
+			    SuitableTiming =SuitableInterval ;
 		    
 	 
 }

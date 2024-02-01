@@ -3,7 +3,6 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include"SuitableBullet.h"
-#include"Trackingbullet.h"
 #include"Input.h"
 
 class Enemy {
@@ -23,10 +22,7 @@ public:
 
 	//攻撃
 	void SecondAttack();
-	void ThirdAttack();
 
-	//追尾
-	//const std::list<Trackingbullet*>& GetTrackingbullet() const { return trackingbulletNums_; } 
 	// 複数
 	const std::list<SuitableBullet*>& GetSuitableBullet() const { return suitableBulletNums_; }
 
@@ -36,7 +32,7 @@ public:
 	void SetParent(const WorldTransform* parent);
 
 	// 弾の出るタイミング
-	static const int FireInterval = 25;
+	static const int SuitableInterval = 25;
 
 private:
 	//行動フェーズ
@@ -75,18 +71,15 @@ private:
 	//Phase phase_ = Phase::Final;
 
 	// 敵複数
-	std ::list<Trackingbullet*> trackingbulletNums_;
 	std ::list<SuitableBullet*> suitableBulletNums_;
 
 	//敵回転
 	float RotateSpeed;
 	//弾の出るタイミング
-	int32_t TrackingTiming;
 	int32_t SuitableTiming;
 	//弾のモデル
-	Model* TrackingModel;
 	Model* SuitableModel;
 	Vector3 suitableposition;
 
-	SuitableBullet suitableBullet_;
+	//SuitableBullet suitableBullet_;
 };

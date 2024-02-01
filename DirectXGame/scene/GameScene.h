@@ -89,9 +89,6 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelEnemyBody3_;
 
 	//敵の弾
-	//追尾
-	std::unique_ptr<Trackingbullet> trackingBullet_;
-	std::unique_ptr<Model> modelTrackingBullet_;
 	//複数
 	std::unique_ptr<Enemy> suitableBullet_;
 	std::unique_ptr<Model> modelSuitableBullet_;
