@@ -144,7 +144,7 @@ private: // メンバ変数
 	private:
 	//サウンドデータハンドル
 	uint32_t GameSound_ = 0;
-	
+	//uint32_t 
 
 
 	//音声再生ハンドル

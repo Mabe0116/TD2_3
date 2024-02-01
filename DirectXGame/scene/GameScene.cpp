@@ -142,7 +142,7 @@ void GameScene::Update() {
 	switch (scene) {
 	case GameScene::TITLE: // タイトルシーン
 
-		audio_->StopWave(Gamevoice_);
+		//audio_->StopWave(Gamevoice_);
 	
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
@@ -171,7 +171,6 @@ void GameScene::Update() {
 
 		if (!audio_->IsPlaying(voiceHandle_)) {
 			voiceHandle_ = audio_->PlayWave(Gamevoice_, true, 0.5);
-		
 		}
 
 		audio_->ResumeWave(voiceHandle_);
@@ -241,7 +240,7 @@ void GameScene::Update() {
 
 
 		case GameScene::GAMEOVER:
-			
+
 		    player_->Reset();
 
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
@@ -256,7 +255,8 @@ void GameScene::Update() {
 
 
 		case GameScene::CLEAR:
-		
+		audio_->StopWave(Gamevoice_);
+	
 			player_->Reset();
 
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
