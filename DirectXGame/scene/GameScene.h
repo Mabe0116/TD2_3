@@ -114,15 +114,26 @@ private: // メンバ変数
 	};
 
 	Scene scene = TITLE;
+	
+	/*Sprite* fadeSprite_ = nullptr;
+	　Vector4 fadeColor_ = {1.0f, 1.0f, 1.0f, 1.0f};*/
 
 	//テクスチャハンドル
+	uint32_t FadeFake_ = 0;
 	uint32_t TitleTexture_ = 0;
 	uint32_t OperationTexture_ = 0;
 	uint32_t ClearTexture_ = 0;
 
+	Sprite* fadeTitleSprite = nullptr;
+	Vector4 fadeTitleColor_ = {1.0f, 1.0f, 1.0f, 0.0f};
+
+	Sprite* fadeOperationSprite_ = nullptr;
+	Vector4 fadeOperationColor_ = {1.0f, 1.0f, 1.0f, 0.0f};
+
 	//シーン画面のスプライト
+	std::unique_ptr<Sprite> FadeFakeSprite = nullptr;
 	std::unique_ptr<Sprite> TitleSprite_ = nullptr;
-	std::unique_ptr<Sprite> OperationSprite_ = nullptr;
+	//std::unique_ptr<Sprite> OperationSprite_ = nullptr;
 	std::unique_ptr<Sprite> ClearSprite_ = nullptr;
 
 	//ゲームパッドの状態を得る変数
@@ -148,9 +159,9 @@ private: // メンバ変数
 	// 速度
 	Vector3 velocity_;
 
-	//フェードイン
-	Sprite* fadeSprite_ = nullptr;
-	Vector4 fadeColor_ = {1.0f, 1.0f, 1.0f, 1.0f};
+	//フェード
+	/*Sprite* fadeSprite_ = nullptr;
+	Vector4 fadeColor_ = {1.0f, 1.0f, 1.0f, 0.0f};*/
 
 	/// <summary>
 	/// ゲームシーン用
