@@ -19,6 +19,10 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
+	//フェードイン初期化
+	uint32_t fadeTexturHandle = TextureManager::Load("scene/fade.png");
+	fadeSprite_ = Sprite::Create(fadeTexturHandle, {0, 0});
+
 	// 3Dモデルデータの生成
 	model_.reset(Model::Create());
 
@@ -121,6 +125,9 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	//フェードイン更新
+	fadeColor_.w -= 0.005f;
+	fadeSprite_->SetColor(fadeColor_);
 
 	switch (scene) {
 	case GameScene::TITLE: // タイトルシーン
@@ -222,6 +229,8 @@ void GameScene::Draw() {
 
 	if (scene == TITLE) {
 		TitleSprite_->Draw();
+		// フェードイン描画
+		fadeSprite_->Draw();
 	}
 	if (scene == OPERATION) {
 		OperationSprite_->Draw();

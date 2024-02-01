@@ -148,6 +148,9 @@ private: // メンバ変数
 	// 速度
 	Vector3 velocity_;
 
+	//フェードイン
+	Sprite* fadeSprite_ = nullptr;
+	Vector4 fadeColor_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	/// <summary>
 	/// ゲームシーン用
