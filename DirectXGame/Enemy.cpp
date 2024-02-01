@@ -74,7 +74,7 @@ void Enemy::Initialize(
 	fireTimer_ = kFireInterval;
 	// 自キャラの生成
 	//player_ = std::make_unique<Player>();
-phase_ = Phase::Final;
+phase_ = Phase::First;
 }
 
 void Enemy::Update() {
