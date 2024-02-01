@@ -23,9 +23,6 @@ public:
 
 	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
 
-	// 親となるワールドトランスフォーム
-	void SetParent(const WorldTransform* parent);
-
 	// 当たり判定
 	void OnCollision();
 
@@ -62,6 +59,7 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 	
 	// ワールド変換データ
+	WorldTransform worldTransform_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;
 	WorldTransform worldTransformBody2_;
