@@ -160,10 +160,6 @@ void Enemy::SecondAttack() {
 }
 void Enemy::OnCollision() { isDead_ = true; }
 
-
-
-void Enemy::SecondAttack() {}
-
 //void Enemy::ThirdAttack() {}
 
 // 親子関係を結ぶ
