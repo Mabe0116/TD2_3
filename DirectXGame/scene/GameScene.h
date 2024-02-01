@@ -93,7 +93,7 @@ private: // メンバ変数
 	std::unique_ptr<Trackingbullet> trackingBullet_;
 	std::unique_ptr<Model> modelTrackingBullet_;
 	//複数
-	std::unique_ptr<SuitableBullet> suitableBullet_;
+	std::unique_ptr<Enemy> suitableBullet_;
 	std::unique_ptr<Model> modelSuitableBullet_;
 
 	Skydome* skydome_ = nullptr;
@@ -150,6 +150,9 @@ private: // メンバ変数
 
 
 	
+	// 速度
+	Vector3 velocity_;
+
 
 	/// <summary>
 	/// ゲームシーン用
