@@ -4,11 +4,12 @@
 
 class SuitableBullet {
 public:
-	~SuitableBullet();
 	void Initialize(Model* bullet_, const Vector3& position, const Vector3& velocity);
 	void Update();
 	void Draw(ViewProjection& viewProjection);
 	bool IsDead() const { return isDead_; }
+
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	private:
 	WorldTransform worldTransform_;
@@ -20,5 +21,6 @@ public:
 	//デスフラグ
 	bool isDead_ = false;
 	// 速度
-	Vector3 velocity_;
+	Vector3 velocity_ = {0.2f, 0, 0.2f};
+	;
 };

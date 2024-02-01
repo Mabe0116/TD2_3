@@ -4,6 +4,9 @@
 #include <ImGuiManager.h>
 
 Enemy::~Enemy() {
+	for (SuitableBullet* suitablenum : suitableBulletNums_) {
+		delete suitablenum;
+	}
 }
 
 void Enemy::Initialize(
@@ -17,8 +20,8 @@ void Enemy::Initialize(
 	assert(body3);
 	bodyModel3_ = body3;
 	//弾
-	//assert(modelSuitable);
-	//modelSuitable_ = modelSuitable;
+	/*assert(modelSuitable);
+	suitableModel_ = modelSuitable;*/
 
 	worldTransform_.Initialize();
 	worldTransformHead_.Initialize();
@@ -27,7 +30,10 @@ void Enemy::Initialize(
 	worldTransformBody3_.Initialize();
 	//弾
 	worldTransformSuitable_.Initialize();
+	//親子関係これでいろんなところに打てた
 	worldTransformSuitable_.parent_ = &worldTransform_;
+	SuitableModel = Model::CreateFromOBJ("cube", true);
+
 
 	// 基底クラスのベースキャラクターworldTransformを親子関係のベースとする
 	// ヘッドの親をにする
@@ -46,22 +52,26 @@ void Enemy::Initialize(
 	worldTransformBody3_.translation_ = {0, 0, 0};
 
 	RotateSpeed = 0.1f;
-	SuitableTiming = 0;
+	//タイマー初期化
+	SuitableTiming = FireInterval;
+	TrackingTiming = FireInterval;
 	
-phase_ = Phase::Second;
+//phase_ = Phase::Second;
 //	phase_ = Phase::First;
-
-	}
+}
 
 void Enemy::Update() {
 
+	
 	//switch (phase_) {
 	//case Phase::First:
+	//default:
 
 	//		break;
 	//case Phase::Second:
 	//	    SecondAttack();
-	//		 for (SuitableBullet* suitablenum : suitableBullet_) {
+	//	    SuitableTiming++; 
+	//		 for (SuitableBullet* suitablenum : suitableBulletNums_) {
 	//		    if (suitablenum) {
 	//			    // 複数弾の更新
 	//			    suitablenum->Update();
@@ -69,17 +79,37 @@ void Enemy::Update() {
 	//	    }
 	//	    break;
 	//case Phase::Third:
-	//	    ThirdAttack();
+	//	    //ThirdAttack();
 	//	    break;
 	//case Phase::Final:
-	//	    SecondAttack(); 
-	//		ThirdAttack();
+	//	    //SecondAttack(); 
+	//		//ThirdAttack();
 	//	break;
 	//}
 
-	  SecondAttack();
+	//敵回転
+	 worldTransform_.rotation_.y += RotateSpeed;
+	//複数弾のタイマー
+	 SuitableTiming--;
+	if (SuitableTiming <= 0) {
+		SecondAttack();
+	}
+	for (SuitableBullet* suitablenum : suitableBulletNums_) {
+		// 複数弾の更新
+		suitablenum->Update();
+	}
 
-worldTransform_.UpdateMatrix();
+	// デスフラグの経った敵の削除
+	suitableBulletNums_.remove_if([](SuitableBullet* enemynum) {
+		if (enemynum->IsDead()) {
+			delete enemynum;
+			return true;
+		}
+		return false;
+	});
+
+
+	worldTransform_.UpdateMatrix();
 	worldTransformHead_.UpdateMatrix();
 	worldTransformBody1_.UpdateMatrix();
 	worldTransformBody2_.UpdateMatrix();
@@ -87,9 +117,6 @@ worldTransform_.UpdateMatrix();
 	//弾
 	worldTransformSuitable_.UpdateMatrix();
 
-		ImGui::Begin("window");
-	ImGui::DragFloat("count", &SuitableTiming);
-	ImGui::End();
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
@@ -115,28 +142,24 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 
 void Enemy::SecondAttack() {
 		  
-		    worldTransform_.rotation_.y += RotateSpeed;
-		    SuitableTiming++;
-	
-	 for (SuitableBullet* suitablenum : suitableBulletNums_) {
-		    // 複数弾の更新
-		    suitablenum->Update();
-		    if (SuitableTiming >=20) {
-			    Vector3 velocity(0.2f, 0, 0.2f);
-			    // 速度ベクトルを自機の向きに合わせて回転させる
+		    const float kBulletSpeed = 1.0f;
+			    Vector3 velocity(kBulletSpeed, 0, kBulletSpeed);
+
 			    velocity = TransformNormal(velocity, worldTransformSuitable_.matWorld_);
-			    // 複数弾の生成
-			 //   SuitableBullet* newSuitablenum = new SuitableBullet();
-			    suitablenum->Initialize(
-			        SuitableModel, worldTransformSuitable_.translation_, velocity);
-			    // 複数弾の登録
-			    suitableBulletNums_.push_back(suitablenum);
-			    SuitableTiming = 0;
-		    }
-	 }
+	   
+	        SuitableBullet* newSuitableBullet = new SuitableBullet();
+		  // 複数弾の更新
+	        newSuitableBullet->Initialize(
+	            SuitableModel, worldTransformHead_.translation_, velocity);
+				// 複数弾の登録
+			   suitableBulletNums_.push_back(newSuitableBullet);
+				//タイマー初期化
+			    SuitableTiming =FireInterval ;
+		    
+	 
 }
 
-void Enemy::ThirdAttack() {}
+//void Enemy::ThirdAttack() {}
 
 // 親子関係を結ぶ
 void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }

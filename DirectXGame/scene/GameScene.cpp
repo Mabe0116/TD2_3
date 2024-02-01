@@ -83,16 +83,17 @@ void GameScene::Initialize() {
 	//追尾
 	//trackingBullet_ = std::make_unique<Trackingbullet>();
 	// 3Dモデルの生成
-//	modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
+	//modelTrackingBullet_.reset(Model::CreateFromOBJ("bullet", true));
 	// 追尾弾の初期化
 	//trackingBullet_->Initialize(modelTrackingBullet_.get());
 
 	//複数
-	suitableBullet_ = std::make_unique<SuitableBullet>();
+	//suitableBullet_ = std::make_unique<SuitableBullet>();
 	// 3Dモデルの生成
-	modelSuitableBullet_.reset(Model::CreateFromOBJ("bullet", true));
+	//modelSuitableBullet_.reset(Model::CreateFromOBJ("Enemy_Head", true));
 	// 複数弾の初期化
-	suitableBullet_->Initialize(modelSuitableBullet_.get(),worldTransform_.translation_,velocity_);
+	/*suitableBullet_->Initialize(
+	    modelSuitableBullet_.get(), worldTransformsu.translation_, velocity_);*/
 
 
 	// デバッグカメラの生成
@@ -138,9 +139,9 @@ void GameScene::Update() {
 			}
 		}
 			//コントローラー忘れた
-			if (input_->TriggerKey(DIK_SPACE)) {
+			/*if (input_->TriggerKey(DIK_SPACE)) {
 				scene = OPERATION;
-			}
+			}*/
 
 		break;
 
@@ -155,9 +156,9 @@ void GameScene::Update() {
 		}
 
 			// コントローラー忘れた
-			if (input_->TriggerKey(DIK_SPACE)) {
+			/*if (input_->TriggerKey(DIK_SPACE)) {
 				scene = GAME;
-			}
+			}*/
 
 	
 		break;
