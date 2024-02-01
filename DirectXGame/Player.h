@@ -18,6 +18,7 @@ public:
 
 	void Attack();
 
+
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 	Vector3 GetWorldPosition();
@@ -31,6 +32,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
+	void Reset();
 
 private:
 	// ゲームパッドの状態を得る変数
@@ -63,6 +66,8 @@ private:
 	std::unique_ptr<Enemy> enemy_;
 	// プレイヤーから敵に向かう差分ベクトル
 	Vector3 DiffVector = {0, 0, 0};
+
+
 
 public:
 	// 親子関係を結ぶ

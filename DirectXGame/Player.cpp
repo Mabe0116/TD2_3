@@ -184,3 +184,18 @@ Vector3 Player::GetWorldRotationPos() {
 
 	return worldRotationPos;
 }
+
+void Player::Reset() {
+	worldTransformHead_.translation_ = {0, 1.0f, 0};
+	worldTransformBody1_.translation_ = {0, 1.0f, 0};
+	worldTransformBody2_.translation_ = {0, 1.0f, 0};
+	worldTransformBody3_.translation_ = {0, 1.0f, 0};
+
+	worldTransformHead_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody1_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody2_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformBody3_.scale_ = {0.5f, 0.5f, 0.5f};
+
+	angle = 90;
+
+}

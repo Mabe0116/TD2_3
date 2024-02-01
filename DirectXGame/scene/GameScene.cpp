@@ -241,7 +241,9 @@ void GameScene::Update() {
 
 
 		case GameScene::GAMEOVER:
-			//
+			
+		    player_->Reset();
+
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
@@ -254,7 +256,9 @@ void GameScene::Update() {
 
 
 		case GameScene::CLEAR:
-		//
+		
+			player_->Reset();
+
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
