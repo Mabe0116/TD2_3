@@ -41,38 +41,10 @@ void Enemy::Update() {
 
 		fallcount += 0.1f;
 
-		/*worldTransformBody3_.translation_.y = -0.5f;
-		worldTransformBody2_.translation_.y = -0.5f;
-		worldTransformBody1_.translation_.y = -0.5f;
-		worldTransformHead_.translation_.y = -0.5f;*/
-
-		// if (worldTransformBody1_.translation_.y > -0.5f) {
 		worldTransformBody3_.translation_.y -= 0.1f;
 		worldTransformBody2_.translation_.y -= 0.1f;
 		worldTransformBody1_.translation_.y -= 0.1f;
 		worldTransformHead_.translation_.y -= 0.1f;
-		//}
-
-		//// if (worldTransformBody2_.translation_.y > -0.5f) {
-		//worldTransformBody3_.translation_.y -= 0.1f;
-		//worldTransformBody2_.translation_.y -= 0.1f;
-		//worldTransformBody1_.translation_.y -= 0.1f;
-		//worldTransformHead_.translation_.y -= 0.1f;
-		////}
-
-		//// if (worldTransformBody3_.translation_.y > -1.5f) {
-		//worldTransformBody3_.translation_.y -= 0.1f;
-		//worldTransformBody2_.translation_.y -= 0.1f;
-		//worldTransformBody1_.translation_.y -= 0.1f;
-		//worldTransformHead_.translation_.y -= 0.1f;
-		////}
-
-		//if (worldTransformHead_.translation_.y > 2.0f) {
-		//	worldTransformBody3_.translation_.y -= 0.1f;
-		//	worldTransformBody2_.translation_.y -= 0.1f;
-		//	worldTransformBody1_.translation_.y -= 0.1f;
-		//	worldTransformHead_.translation_.y -= 0.1f;
-		//}
 
 		if (fallcount >= 2.5f) {
 			isfall_ = false;
