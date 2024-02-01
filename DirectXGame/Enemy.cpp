@@ -23,11 +23,8 @@ void Enemy::Initialize(
 	bodyModel2_ = body2;
 	assert(body3);
 	bodyModel3_ = body3;
-	//弾
-	/*assert(modelSuitable);
-	suitableModel_ = modelSuitable;*/
 
-	bulletModel_ = Model::CreateFromOBJ("cube", true);
+	
 
 	worldTransform_.Initialize();
 	worldTransformHead_.Initialize();
@@ -57,21 +54,26 @@ void Enemy::Initialize(
 	worldTransformBody2_.translation_ = {0, 0, 0};
 	worldTransformBody3_.translation_ = {0, 0, 0};
 
+	
+
 	// 親子関係
 	worldTransformSuitable_.parent_ = &worldTransform_;
+
+	//複数弾のモデル
 	SuitableModel = Model::CreateFromOBJ("cube", true);
+	//自機狙いの弾
+	bulletModel_ = Model::CreateFromOBJ("cube", true);
 
 	RotateSpeed = 0.1f;
 	//タイマー初期化
 	SuitableTiming = SuitableInterval;
 	
-phase_ = Phase::Second;
-//	phase_ = Phase::First;
 
 	// 発射タイマーを初期化
 	fireTimer_ = kFireInterval;
 	// 自キャラの生成
 	//player_ = std::make_unique<Player>();
+phase_ = Phase::Final;
 }
 
 void Enemy::Update() {
@@ -86,11 +88,14 @@ void Enemy::Update() {
 
 	switch (phase_) {
 	case Phase::First:
-	default:
-
+	//攻撃無し
+		worldTransform_.translation_.y = 2;
 		break;
 	case Phase::Second:
-		// 敵回転
+		//敵の高さ変える
+		worldTransform_.translation_.y = -2;
+		//複数の弾のみ
+		// 複数弾の回転
 		worldTransform_.rotation_.y += RotateSpeed;
 		// 複数弾のタイマー
 		SuitableTiming--;
@@ -103,28 +108,13 @@ void Enemy::Update() {
 		}
 		break;
 	case Phase::Third:
-		// ThirdAttack();
-		break;
-	case Phase::Final:
-		// SecondAttack();
-		// ThirdAttack();
-		break;
-	}
-
+		// 敵の高さ変える
+		 worldTransform_.translation_.y = -5;
+		//追尾弾のみ
 		// 弾更新
 		for (EnemyBullet* bullet : bullets_) {
 			bullet->Update();
 		}
-
-		// デスフラグの経った敵の削除
-		suitableBulletNums_.remove_if([](SuitableBullet* enemynum) {
-			if (enemynum->IsDead()) {
-				delete enemynum;
-				return true;
-			}
-			return false;
-		});
-
 		// 発射タイマーカウントダウン
 		--fireTimer_;
 		// 指定時間に達したら
@@ -135,6 +125,54 @@ void Enemy::Update() {
 			fireTimer_ = kFireInterval;
 		}
 
+		break;
+	case Phase::Final:
+		// 敵の高さ変える
+		 worldTransform_.translation_.y =-8;
+		//複数弾の攻撃
+		// 複数弾の回転
+		worldTransformHead_.rotation_.y += RotateSpeed;
+		// 複数弾のタイマー
+		SuitableTiming--;
+		if (SuitableTiming <= 0) {
+			SecondAttack();
+		}
+		for (SuitableBullet* suitablenum : suitableBulletNums_) {
+			// 複数弾の更新
+			suitablenum->Update();
+		}
+
+		//追尾弾の攻撃
+		// 弾更新
+		for (EnemyBullet* bullet : bullets_) {
+			bullet->Update();
+		}
+		// 発射タイマーカウントダウン
+		--fireTimer_;
+		// 指定時間に達したら
+		if (fireTimer_ <= 0) {
+			// 弾を発射
+			Fire();
+			// 発射タイマーを初期化
+			fireTimer_ = kFireInterval;
+		}
+
+		break;
+	}
+	ImGui::Begin("window");
+	ImGui::DragFloat3("enemy", &worldTransform_.translation_.x);
+	ImGui::End();
+		
+
+		// デスフラグの経った敵の削除
+		suitableBulletNums_.remove_if([](SuitableBullet* enemynum) {
+			if (enemynum->IsDead()) {
+				delete enemynum;
+				return true;
+			}
+			return false;
+		});
+	
 		worldTransform_.UpdateMatrix();
 		worldTransformHead_.UpdateMatrix();
 		worldTransformBody1_.UpdateMatrix();
@@ -163,10 +201,7 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	 for (SuitableBullet* suitablenum : suitableBulletNums_) {
 		    suitablenum->Draw(viewProjection);
 	 }
-	 headModel_->Draw(worldTransformHead_, viewProjection);
- 	 bodyModel3_->Draw(worldTransformBody3_, viewProjection);
-	 bodyModel2_->Draw(worldTransformBody2_, viewProjection);	 	    
-	 bodyModel1_->Draw(worldTransformBody1_, viewProjection);
+	
 
 	 // 弾描画
 	for (EnemyBullet* bullet : bullets_) {
@@ -176,7 +211,7 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 
 void Enemy::SecondAttack() {
 		  
-		    const float kBulletSpeed = 1.0f;
+		    const float kBulletSpeed = 1;
 			    Vector3 velocity(kBulletSpeed, 0, kBulletSpeed);
 
 			    velocity = TransformNormal(velocity, worldTransformSuitable_.matWorld_);
@@ -189,8 +224,6 @@ void Enemy::SecondAttack() {
 			   suitableBulletNums_.push_back(newSuitableBullet);
 				//タイマー初期化
 			    SuitableTiming =SuitableInterval ;
-		    
-	 
 }
 
 void Enemy::Fire() {
@@ -210,17 +243,17 @@ void Enemy::Fire() {
 	 velocity.z *= kBulletSpeed;
 
 	 // 速度ベクトルを敵の向きに合わせて回転させる
-	 velocity = TransformNormal(velocity, worldTransformHead_.matWorld_);
+	 velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 
 	 // 弾を発生し、初期化
 	 EnemyBullet* newBullet = new EnemyBullet();
-	 newBullet->Initialize(bulletModel_, worldTransformHead_.translation_, velocity);
+	 newBullet->Initialize(bulletModel_, worldTransform_.translation_, velocity);
 	 // 弾を登録
 	 bullets_.push_back(newBullet);
 }
 
 // 親子関係を結ぶ
-void Enemy::SetParent(const WorldTransform* parent) { worldTransformHead_.parent_ = parent; }
+void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos; 

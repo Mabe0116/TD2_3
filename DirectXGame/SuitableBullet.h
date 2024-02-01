@@ -21,6 +21,6 @@ public:
 	//デスフラグ
 	bool isDead_ = false;
 	// 速度
-	Vector3 velocity_ = {0.2f, 0, 0.2f};
+	Vector3 velocity_ = {0.1f, 0, 0.1f};
 	;
 };
