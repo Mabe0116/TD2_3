@@ -4,6 +4,10 @@
 #include "WorldTransform.h"
 #include"SuitableBullet.h"
 #include"Input.h"
+#include "EnemyBullet.h"
+
+// 前方宣言
+class Player;
 
 class Enemy {
 public:
@@ -15,7 +19,14 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
-	//当たり判定
+	void Fire();
+
+	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
+
+	// 親となるワールドトランスフォーム
+	void SetParent(const WorldTransform* parent);
+
+	// 当たり判定
 	void OnCollision();
 
 	Vector3 GetWorldPosition();
@@ -25,8 +36,10 @@ public:
 
 	// 複数
 	const std::list<SuitableBullet*>& GetSuitableBullet() const { return suitableBulletNums_; }
+	// 発射間隔
+	static const int kFireInterval = 60;
 
-	const WorldTransform& GetWorldTransform() { return worldTransformHead_; }
+	void SetPlayer(Player* player) { player_ = player; }
 
 	// 親となるワールドトランスフォーム
 	void SetParent(const WorldTransform* parent);
@@ -47,9 +60,8 @@ private:
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
-
+	
 	// ワールド変換データ
-	WorldTransform worldTransform_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;
 	WorldTransform worldTransformBody2_;
@@ -61,6 +73,10 @@ private:
 	Model* bodyModel1_ = nullptr;
 	Model* bodyModel2_ = nullptr;
 	Model* bodyModel3_ = nullptr;
+	Model* bulletModel_ = nullptr;
+
+	// 敵の弾
+	std::list<EnemyBullet*> bullets_;
 	Model* suitableModel_ = nullptr;
 
 	// デスフラグ
@@ -82,4 +98,9 @@ private:
 	Vector3 suitableposition;
 
 	//SuitableBullet suitableBullet_;
+	// 発射タイマー
+	int32_t fireTimer_ = 0;
+
+	// 自キャラ
+	Player* player_;
 };

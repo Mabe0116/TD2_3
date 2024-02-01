@@ -14,8 +14,6 @@
 #include <memory>
 #include "Skydome.h"
 #include "Ground.h"
-#include "SuitableBullet.h"
-#include "Trackingbullet.h"
 
 /// <summary>
 /// ゲームシーン

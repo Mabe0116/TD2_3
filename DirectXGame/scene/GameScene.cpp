@@ -83,17 +83,10 @@ void GameScene::Initialize() {
 	// 敵キャラの初期化
 	enemy_->Initialize(
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
-	    modelEnemyBody3_.get()/*, modelSuitableBullet_.get()*/);
+	    modelEnemyBody3_.get());
 
-
-	//敵の弾
-	//複数
-	//suitableBullet_ = std::make_unique<SuitableBullet>();
-	// 3Dモデルの生成
-	//modelSuitableBullet_.reset(Model::CreateFromOBJ("Enemy_Head", true));
-	// 複数弾の初期化
-	/*suitableBullet_->Initialize(
-	    modelSuitableBullet_.get(), worldTransformsu.translation_, velocity_);*/
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_.get());
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -128,7 +121,7 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	
+
 	switch (scene) {
 	case GameScene::TITLE: // タイトルシーン
 
@@ -183,9 +176,8 @@ void GameScene::Update() {
 
 	// 敵キャラの更新
 	enemy_->Update();
-	
 
-		skydome_->Update();
+	skydome_->Update();
 
 		// デバッグカメラの更新
 		debugCamera_->Update();
@@ -212,9 +204,6 @@ void GameScene::Update() {
 		};
 		break;
 	}
-
-	
-
 	CheckAllCollision();
 }
 
@@ -287,9 +276,36 @@ void GameScene::Draw() {
 
 void GameScene::CheckAllCollision() {
 
-	//// 判定対象AとBの座標
-	// Vector3 posA, posB;
+	Vector3 posA, posB;
 
-	//// 自弾リストの取得
-	// const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+
+	posA = enemy_->GetWorldPosition();
+
+	for (PlayerBullet* bullet : playerBullets) {
+
+		posB = bullet->GetWorldPosition();
+
+		float X = (posB.x - posA.x);
+		float Y = (posB.y - posA.y);
+		float Z = (posB.z - posA.z);
+
+		float center = sqrtf(X * X + Y * Y + Z * Z);
+		float R1 = 1.5f; // 自分で決める
+		float R2 = 0.5f; // 自分で決める
+		float RR = (R1 + R2);
+
+		if (center <= (RR * RR)) {
+			// 敵キャラの衝突時コールバックを呼び出す
+			enemy_->OnCollision();
+			// 自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+
+			ImGui::Begin("a");
+			ImGui::End();
+
+			EnemyLife--;
+
+		}
+	}
 }
