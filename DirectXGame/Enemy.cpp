@@ -32,7 +32,7 @@ void Enemy::Initialize(
 	worldTransformSuitable_.Initialize();
 	//親子関係これでいろんなところに打てた
 	worldTransformSuitable_.parent_ = &worldTransform_;
-	SuitableModel = Model::CreateFromOBJ("cube", true);
+	SuitableModel = Model::CreateFromOBJ("bullet", true);
 
 
 	// 基底クラスのベースキャラクターworldTransformを親子関係のベースとする
