@@ -29,6 +29,7 @@ private:
 	const ViewProjection* viewProjection_ = nullptr;
 
 	// ワールド変換データ
+	WorldTransform worldTransformBase_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformBody1_;
 	WorldTransform worldTransformBody2_;
@@ -46,6 +47,11 @@ private:
 	bool isDead_ = false;
 
 	bool isDelete_ = false;
+
+	//敵落下
+	bool isfall_ = false;
+
+	float fallcount = 0;
 
 	Vector3 velocity_{};
 };
