@@ -74,7 +74,7 @@ void Enemy::Initialize(
 	fireTimer_ = kFireInterval;
 	// 自キャラの生成
 	//player_ = std::make_unique<Player>();
-phase_ = Phase::Third;
+phase_ = Phase::Final;
 }
 
 void Enemy::Update() {
@@ -97,7 +97,7 @@ void Enemy::Update() {
 		worldTransform_.translation_.y = -2;
 		//複数の弾のみ
 		// 複数弾の回転
-		worldTransform_.rotation_.y += RotateSpeed;
+		worldTransformSuitable_.rotation_.y += RotateSpeed;
 		// 複数弾のタイマー
 		SuitableTiming--;
 		if (SuitableTiming <= 0) {
@@ -129,7 +129,7 @@ void Enemy::Update() {
 		break;
 	case Phase::Final:
 		// 敵の高さ変える
-		 worldTransform_.translation_.y =-8;
+		 worldTransform_.translation_.y =-9;
 		//複数弾の攻撃
 		// 複数弾の回転
 		worldTransformSuitable_.rotation_.y += RotateSpeed;
@@ -161,7 +161,7 @@ void Enemy::Update() {
 		break;
 	}
 	ImGui::Begin("window");
-	ImGui::DragFloat("enemy", &worldTransform_.rotation_.y);
+	ImGui::DragFloat("enemy", &worldTransform_.translation_.y);
 	ImGui::End();
 		
 
@@ -212,7 +212,7 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 
 void Enemy::SecondAttack() {
 		  
-		    const float kBulletSpeed = 1;
+		    const float kBulletSpeed = 0.4f;
 			    Vector3 velocity(kBulletSpeed, 0, kBulletSpeed);
 
 			    velocity = TransformNormal(velocity, worldTransformSuitable_.matWorld_);
@@ -232,7 +232,7 @@ void Enemy::Fire() {
 	            assert(player_);
 
 	            // 弾の速度
-	            const Vector3 kBulletSpeed = {-1.0f, 0.0f, -1.0f};
+	            const Vector3 kBulletSpeed = {-0.6f, 0.0f, -0.6f};
 	            Vector3 velocity(kBulletSpeed.x, kBulletSpeed.y, kBulletSpeed.z);
 
 	            Vector3 playerPos = player_->GetWorldPosition();

@@ -36,7 +36,7 @@ public:
 	// 複数
 	const std::list<SuitableBullet*>& GetSuitableBullet() const { return suitableBulletNums_; }
 	// 発射間隔
-	static const int kFireInterval = 60;
+	static const int kFireInterval = 50;
 
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -44,7 +44,7 @@ public:
 	void SetParent(const WorldTransform* parent);
 
 	// 弾の出るタイミング
-	static const int SuitableInterval = 25;
+	static const int SuitableInterval = 20;
 
 private:
 	//行動フェーズ
