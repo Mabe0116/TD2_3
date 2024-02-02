@@ -160,7 +160,7 @@ void Player::Attack() {
 	}
 }
 
-void Player::OnCollision() {}
+void Player::OnCollision() { isDead_ = true; }
 
 Vector3 Player::GetWorldPosition() {
 	// ワールド座標を入れる変数
