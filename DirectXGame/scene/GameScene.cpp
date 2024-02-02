@@ -22,17 +22,36 @@ void GameScene::Initialize() {
 	// 3Dモデルデータの生成
 	model_.reset(Model::Create());
 
+	//フェード初期化
+	/*uint32_t fadeTexturHandle = TextureManager::Load("scene/fade.png");
+	fadeSprite_ = Sprite::Create(fadeTexturHandle, {0, 0});*/
+
+	uint32_t fadeTitleTexturHandle = TextureManager::Load("scene/title.png");
+	fadeTitleSprite = Sprite::Create(fadeTitleTexturHandle, {0, 0});
+	
+	uint32_t fadeOperationTexturHandle = TextureManager::Load("scene/operation.png");
+	fadeOperationSprite_ = Sprite::Create(fadeOperationTexturHandle, {0, 0});
+
+	FadeFake_ = TextureManager::Load("scene/fade.png");
 	TitleTexture_ = TextureManager::Load("scene/title.png");
 	OperationTexture_ = TextureManager::Load("scene/operation.png");
 	ClearTexture_ = TextureManager::Load("scene/clear.png");
 
+	FadeFakeSprite = std::make_unique<Sprite>();
 	TitleSprite_ = std::make_unique<Sprite>();
-	OperationSprite_ = std::make_unique<Sprite>();
+	//OperationSprite_ = std::make_unique<Sprite>();
 	ClearSprite_ = std::make_unique<Sprite>();
 
+	FadeFakeSprite.reset(Sprite::Create(FadeFake_, {0, 0}));
 	TitleSprite_.reset(Sprite::Create(TitleTexture_, {0, 0}));
-	OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
+	//OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
+
+
+	//サウンド読み込み
+	GameSound_ = audio_->LoadWave("game.wav");
+
+
 
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -70,14 +89,17 @@ void GameScene::Initialize() {
 	// 敵キャラの生成
 	enemy_ = std::make_unique<Enemy>();
 	// 3Dモデルの生成
-	modelEnemyHead_.reset(Model::CreateFromOBJ("player_Head", true));
-	modelEnemyBody1_.reset(Model::CreateFromOBJ("player_Body1", true));
-	modelEnemyBody2_.reset(Model::CreateFromOBJ("player_Body2", true));
-	modelEnemyBody3_.reset(Model::CreateFromOBJ("player_Body3", true));
+	modelEnemyHead_.reset(Model::CreateFromOBJ("Enemy_Head", true));
+	modelEnemyBody1_.reset(Model::CreateFromOBJ("Enemy_Body1", true));
+	modelEnemyBody2_.reset(Model::CreateFromOBJ("Enemy_Body2", true));
+	modelEnemyBody3_.reset(Model::CreateFromOBJ("Enemy_Body3", true));
 	// 敵キャラの初期化
 	enemy_->Initialize(
 	    modelEnemyHead_.get(), modelEnemyBody1_.get(), modelEnemyBody2_.get(),
 	    modelEnemyBody3_.get());
+
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_.get());
 
 	// デバッグカメラの生成
 	debugCamera_ = std::make_unique<DebugCamera>(2000, 2000);
@@ -105,25 +127,46 @@ void GameScene::Initialize() {
 
 	ground_->Initialize(modelGround_);
 
-	//player_->SetParent(&followCamera_->GetWorldTransform());
+
+	
+
+
 }
 
 void GameScene::Update() {
+	// フェード更新
+	//fadeColor_.w += 0.005f;
+	//fadeSprite_->SetColor(fadeColor_);
+	
 
 	switch (scene) {
-
 	case GameScene::TITLE: // タイトルシーン
+
+		audio_->StopWave(Gamevoice_);
+	
+		fadeTitleColor_.w += 0.05f;
+		fadeTitleSprite->SetColor(fadeTitleColor_);
+
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
 				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+
 					scene = OPERATION;
 				}
 			}
 		}
+			//コントローラー忘れた
+			/*if (input_->TriggerKey(DIK_SPACE)) {
+				scene = OPERATION;
+			}*/
+
 		break;
 
 	case GameScene::OPERATION: // 操作説明
+		fadeOperationColor_.w += 0.05f;
+		fadeOperationSprite_->SetColor(fadeOperationColor_);
+
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
@@ -132,11 +175,27 @@ void GameScene::Update() {
 				}
 			}
 		}
-		break;
-	case GameScene::GAME:
 
-	// 自キャラの更新
-	player_->Update();
+			// コントローラー忘れた
+			/*if (input_->TriggerKey(DIK_SPACE)) {
+				scene = GAME;
+			}*/
+
+	
+		break;
+
+	case GameScene::GAME:
+		fadeOperationColor_.w -= 0.005f;
+		fadeOperationSprite_->SetColor(fadeOperationColor_);
+		if (!audio_->IsPlaying(voiceHandle_)) {
+			voiceHandle_ = audio_->PlayWave(Gamevoice_, true, 0.5);
+		
+		}
+
+		audio_->ResumeWave(voiceHandle_);
+
+		// 自キャラの更新
+		player_->Update();
 
 	// 敵キャラの更新
 	enemy_->Update();
@@ -146,6 +205,7 @@ void GameScene::Update() {
 		// デバッグカメラの更新
 		debugCamera_->Update();
 
+			
 #ifdef _DEBUG
 		if (input_->TriggerKey(DIK_RETURN)) {
 			isDebugCameraActive_ = true;
@@ -184,10 +244,14 @@ void GameScene::Draw() {
 	/// </summary>
 
 	if (scene == TITLE) {
-		TitleSprite_->Draw();
+		//TitleSprite_->Draw();
+		// フェード描画
+		FadeFakeSprite->Draw();
+		fadeTitleSprite->Draw();
 	}
 	if (scene == OPERATION) {
-		OperationSprite_->Draw();
+		TitleSprite_->Draw();
+		fadeOperationSprite_->Draw();
 	}
 	if (scene == CLEAR) {
 		ClearSprite_->Draw();
