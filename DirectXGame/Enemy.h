@@ -24,6 +24,8 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	void SetVelocity(const Vector3& velocity);
+
 private:
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
@@ -53,5 +55,8 @@ private:
 
 	float fallcount = 0;
 
-	Vector3 velocity_{};
+	//体がはじかれたかを判別するフラグ
+	bool isThrown_[4]{};
+	//飛ばされる速度ベクトル
+	Vector3 velocity_[4]{};
 };

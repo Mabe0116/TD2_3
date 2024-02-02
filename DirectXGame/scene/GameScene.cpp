@@ -105,7 +105,7 @@ void GameScene::Initialize() {
 
 	ground_->Initialize(modelGround_);
 
-	//player_->SetParent(&followCamera_->GetWorldTransform());
+	// player_->SetParent(&followCamera_->GetWorldTransform());
 }
 
 void GameScene::Update() {
@@ -135,13 +135,13 @@ void GameScene::Update() {
 		break;
 	case GameScene::GAME:
 
-	// 自キャラの更新
-	player_->Update();
+		// 自キャラの更新
+		player_->Update();
 
-	// 敵キャラの更新
-	enemy_->Update();
+		// 敵キャラの更新
+		enemy_->Update();
 
-	skydome_->Update();
+		skydome_->Update();
 
 		// デバッグカメラの更新
 		debugCamera_->Update();
@@ -261,6 +261,7 @@ void GameScene::CheckAllCollision() {
 		if (center <= RR) {
 			// 敵キャラの衝突時コールバックを呼び出す
 			enemy_->OnCollision();
+			enemy_->SetVelocity(bullet->GetVelocity());
 			// 自弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
 
@@ -268,7 +269,6 @@ void GameScene::CheckAllCollision() {
 			ImGui::End();
 
 			EnemyLife--;
-
 		}
 	}
 }

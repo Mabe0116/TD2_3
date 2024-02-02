@@ -2,9 +2,8 @@
 #include "Model.h"
 #include "WorldTransform.h"
 
-
 class PlayerBullet {
-public: 
+public:
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 
 	void Update();
@@ -20,18 +19,19 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	const Vector3& GetVelocity() const { return velocity_; };
+
 private:
-	//ワールド座標データ
+	// ワールド座標データ
 	WorldTransform worldTransform_;
-	//モデル
+	// モデル
 	Model* model_ = nullptr;
-	//テクスチャハンドル
+	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	//速度
+	// 速度
 	Vector3 velocity_;
 	// デスタイマー
 	int32_t deathTimer_ = kLifeTime;
 	// デスフラグ
 	bool isDead_ = false;
-
 };
