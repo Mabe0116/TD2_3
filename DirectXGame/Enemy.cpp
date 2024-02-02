@@ -34,8 +34,8 @@ void Enemy::Initialize(
 	worldTransformBody3_.Initialize();
 	worldTransformBase_.Initialize();
 
-	worldTransform_.rotation_.y = 0;
-	worldTransform_.scale_ = {3, 3, 3};
+	worldTransformBase_.rotation_.y = 0;
+	worldTransformBase_.scale_ = {3, 3, 3};
 	//弾
 	worldTransformSuitable_.Initialize();
 	
@@ -56,7 +56,7 @@ void Enemy::Initialize(
 	
 
 	// 親子関係
-	worldTransformSuitable_.parent_ = &worldTransform_;
+	worldTransformSuitable_.parent_ = &worldTransformBase_;
 
 	//複数弾のモデル
 	SuitableModel = Model::CreateFromOBJ("cube", true);
@@ -92,11 +92,11 @@ void Enemy::Update() {
 	switch (phase_) {
 	case Phase::First:
 	//攻撃無し
-		worldTransform_.translation_.y = 2;
+		worldTransformBase_.translation_.y = 2;
 		break;
 	case Phase::Second:
 		//敵の高さ変える
-		worldTransform_.translation_.y = -2;
+		worldTransformBase_.translation_.y = -2;
 		//複数の弾のみ
 		// 複数弾の回転
 		worldTransformSuitable_.rotation_.y += RotateSpeed;
@@ -112,7 +112,7 @@ void Enemy::Update() {
 		break;
 	case Phase::Third:
 		// 敵の高さ変える
-		 worldTransform_.translation_.y = -5;
+		worldTransformBase_.translation_.y = -5;
 		//追尾弾のみ
 		// 弾更新
 		for (EnemyBullet* bullet : bullets_) {
@@ -131,7 +131,7 @@ void Enemy::Update() {
 		break;
 	case Phase::Final:
 		// 敵の高さ変える
-		 worldTransform_.translation_.y =-9;
+		worldTransformBase_.translation_.y =-9;
 		//複数弾の攻撃
 		// 複数弾の回転
 		worldTransformSuitable_.rotation_.y += RotateSpeed;
@@ -163,7 +163,7 @@ void Enemy::Update() {
 		break;
 	}
 	ImGui::Begin("window");
-	ImGui::DragFloat("enemy", &worldTransform_.translation_.y);
+	ImGui::DragFloat("enemy", &worldTransformBase_.translation_.y);
 	ImGui::End();
 		
 
@@ -223,7 +223,7 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	  headModel_->Draw(worldTransformHead_, viewProjection);
 	 }
 	if (phase_ == Phase::First || phase_ == Phase::Second||phase_ == Phase::Third) {
-	   bodyModel1_->Draw(worldTransformBody1_, viewProjection);
+	  bodyModel1_->Draw(worldTransformBody1_, viewProjection);
      }
 	 if (phase_ == Phase::First || phase_ == Phase::Second) {
 	  bodyModel2_->Draw(worldTransformBody2_, viewProjection);
@@ -284,22 +284,12 @@ void Enemy::Fire() {
 	            newBullet->Initialize(bulletModel_, worldTransformHead_.translation_, velocity);
 	            // 弾を登録
 	            bullets_.push_back(newBullet);
-	headModel_->Draw(worldTransformHead_, viewProjection);
-	bodyModel3_->Draw(worldTransformBody3_, viewProjection);
-
-	if (isDelete_ == false) {
-		bodyModel1_->Draw(worldTransformBody1_, viewProjection);
-	}
-
-	if (isDelete_ == false) {
-		bodyModel2_->Draw(worldTransformBody2_, viewProjection);
-	}
 }
 
 
 
 // 親子関係を結ぶ
-void Enemy::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
+void Enemy::SetParent(const WorldTransform* parent) { worldTransformBase_.parent_ = parent; }
 
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos;
@@ -310,7 +300,7 @@ Vector3 Enemy::GetWorldPosition() {
 }
 
 float Enemy::GetworldRotY() {
-	{ return worldTransform_.rotation_.y; }
+	{ return worldTransformBase_.rotation_.y; }
 }
 
 
