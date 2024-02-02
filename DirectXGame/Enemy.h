@@ -48,6 +48,8 @@ public:
 
 	float Hp = 4.0f;
 
+	void SetVelocity(const Vector3& velocity);
+
 private:
 	//行動フェーズ
 	enum class Phase {
@@ -113,5 +115,8 @@ private:
 
 	float fallcount = 0;
 
-	Vector3 velocity_{};
+	//体がはじかれたかを判別するフラグ
+	bool isThrown_[4]{};
+	//飛ばされる速度ベクトル
+	Vector3 velocity_[4]{};
 };

@@ -187,10 +187,18 @@ void Enemy::Update() {
 
 		fallcount += 0.1f;
 
-		worldTransformBody3_.translation_.y -= 0.1f;
-		worldTransformBody2_.translation_.y -= 0.1f;
-		worldTransformBody1_.translation_.y -= 0.1f;
-		worldTransformHead_.translation_.y -= 0.1f;
+		if (!isThrown_[0]) {
+			worldTransformBody1_.translation_.y -= 0.1f;
+		}
+		if (!isThrown_[1]) {
+			worldTransformBody2_.translation_.y -= 0.1f;
+		}
+		if (!isThrown_[2]) {
+			worldTransformBody3_.translation_.y -= 0.1f;
+		}
+		if (!isThrown_[3]) {
+			worldTransformHead_.translation_.y -= 0.1f;
+		}
 
 		if (fallcount >= 1.4f) {
 			isfall_ = false;
@@ -200,6 +208,7 @@ void Enemy::Update() {
 
 	ImGui::Begin("count");
 	ImGui::DragFloat("a", &fallcount);
+	ImGui::DragFloat3("Velocity", &velocity_[0].x);
 	ImGui::End();
 
 	if (isDelete_ == true) {
@@ -211,6 +220,24 @@ void Enemy::Update() {
 			// velocity_ = {0.0f, 0.0f, 0.0f};
 			worldTransformHead_.translation_.y = 0.0f;
 		}
+	}
+
+	// 体が飛ばされる処理
+	if (isThrown_[0]) {
+		worldTransformBody1_.parent_ = nullptr;
+		Move(worldTransformBody1_.translation_, velocity_[0]);
+	}
+	if (isThrown_[1]) {
+		worldTransformBody2_.parent_ = nullptr;
+		Move(worldTransformBody2_.translation_, velocity_[1]);
+	}
+	if (isThrown_[2]) {
+		worldTransformBody3_.parent_ = nullptr;
+		Move(worldTransformBody3_.translation_, velocity_[2]);
+	}
+	if (isThrown_[3]) {
+		worldTransformHead_.parent_ = nullptr;
+		Move(worldTransformHead_.translation_, velocity_[3]);
 	}
 
 	worldTransformBase_.UpdateMatrix();
@@ -317,4 +344,21 @@ void Enemy::OnCollision() {
 	Hp -= 1;
 
 	isfall_ = true;
+
+	for (int i = 0; i < 4; i++) {
+		if (!isThrown_[i]) {
+			isThrown_[i] = true;
+			break;
+		}
+	}
+}
+
+void Enemy::SetVelocity(const Vector3& velocity) {
+	for (int i = 0; i < 4; i++) {
+		if (velocity_[i].x == 0.0f && velocity_[i].y == 0.0f && velocity_[i].z == 0.0f) {
+			velocity_[i] = velocity;
+			velocity_[i].y = 0.0f;
+			break;
+		}
+	}
 }
