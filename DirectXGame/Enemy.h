@@ -46,6 +46,8 @@ public:
 	// 弾の出るタイミング
 	static const int SuitableInterval = 20;
 
+	float Hp = 4.0f;
+
 private:
 	//行動フェーズ
 	enum class Phase {
@@ -83,7 +85,7 @@ private:
 	bool isDead_ = false;
 
 	//フェーズ
-	Phase phase_;
+	Phase phase_ = Phase::First;
 	//Phase phase_ = Phase::Final;
 
 	// 敵複数

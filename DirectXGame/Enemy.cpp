@@ -25,9 +25,6 @@ void Enemy::Initialize(
 	assert(body3);
 	bodyModel3_ = body3;
 
-	
-
-
 	worldTransformHead_.Initialize();
 	worldTransformBody1_.Initialize();
 	worldTransformBody2_.Initialize();
@@ -38,7 +35,6 @@ void Enemy::Initialize(
 	worldTransformBase_.scale_ = {3, 3, 3};
 	//弾
 	worldTransformSuitable_.Initialize();
-	
 
 
 	// 基底クラスのベースキャラクターworldTransformを親子関係のベースとする
@@ -50,10 +46,6 @@ void Enemy::Initialize(
 	worldTransformBody2_.parent_ = &worldTransformBase_;
 	// ボディ3の親をヘッドにする
 	worldTransformBody3_.parent_ = &worldTransformBase_;
-
-	
-
-	
 
 	// 親子関係
 	worldTransformSuitable_.parent_ = &worldTransformBase_;
@@ -72,14 +64,14 @@ void Enemy::Initialize(
 	fireTimer_ = kFireInterval;
 	// 自キャラの生成
 	//player_ = std::make_unique<Player>();
-phase_ = Phase::First;
-	worldTransformHead_.translation_ = {0.0f, 2.0f, 0.0f};
-	worldTransformBody1_.translation_ = {0.0f, 2.0f, 0.0f};
-	worldTransformBody2_.translation_ = {0.0f, 2.0f, 0.0f};
-	worldTransformBody3_.translation_ = {0.0f, 2.0f, 0.0f};
+	worldTransformHead_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformBody1_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformBody2_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformBody3_.translation_ = {0.0f, 0.0f, 0.0f};
 }
 
 void Enemy::Update() {
+
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](EnemyBullet* bullet) {
 		if (bullet->IsDead()) {
@@ -93,10 +85,15 @@ void Enemy::Update() {
 	case Phase::First:
 	//攻撃無し
 		worldTransformBase_.translation_.y = 2;
+
+	    if (isfall_ == true) {
+			phase_ = Phase::Second;
+	    }
+
 		break;
 	case Phase::Second:
 		//敵の高さ変える
-		worldTransformBase_.translation_.y = -2;
+		//worldTransformBase_.translation_.y = -2;
 		//複数の弾のみ
 		// 複数弾の回転
 		worldTransformSuitable_.rotation_.y += RotateSpeed;
@@ -109,10 +106,14 @@ void Enemy::Update() {
 			// 複数弾の更新
 			suitablenum->Update();
 		}
+		if (isfall_ == true && fallcount==0) {
+			phase_ = Phase::Third;
+		}
+
 		break;
 	case Phase::Third:
 		// 敵の高さ変える
-		worldTransformBase_.translation_.y = -5;
+		//worldTransformBase_.translation_.y = -5;
 		//追尾弾のみ
 		// 弾更新
 		for (EnemyBullet* bullet : bullets_) {
@@ -128,10 +129,14 @@ void Enemy::Update() {
 			fireTimer_ = kFireInterval;
 		}
 
+		if (isfall_ == true && fallcount == 0) {
+			phase_ = Phase::Final;
+		}
+
 		break;
 	case Phase::Final:
 		// 敵の高さ変える
-		worldTransformBase_.translation_.y =-9;
+		//worldTransformBase_.translation_.y =-9;
 		//複数弾の攻撃
 		// 複数弾の回転
 		worldTransformSuitable_.rotation_.y += RotateSpeed;
@@ -165,7 +170,6 @@ void Enemy::Update() {
 	ImGui::Begin("window");
 	ImGui::DragFloat("enemy", &worldTransformBase_.translation_.y);
 	ImGui::End();
-		
 
 		// デスフラグの経った敵の削除
 		suitableBulletNums_.remove_if([](SuitableBullet* enemynum) {
@@ -188,7 +192,7 @@ void Enemy::Update() {
 		worldTransformBody1_.translation_.y -= 0.1f;
 		worldTransformHead_.translation_.y -= 0.1f;
 
-		if (fallcount >= 2.5f) {
+		if (fallcount >= 1.4f) {
 			isfall_ = false;
 			fallcount = 0;
 		}
@@ -231,12 +235,13 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	 if (phase_ == Phase::First) {
 	  bodyModel3_->Draw(worldTransformBody3_, viewProjection);
 	 }
-	 // 複数弾の描画複数
-	 for (SuitableBullet* suitablenum : suitableBulletNums_) {
-		    suitablenum->Draw(viewProjection);
+	 if (phase_ == Phase::Second || phase_ == Phase::Final) {
+	  // 複数弾の描画複数
+	  for (SuitableBullet* suitablenum : suitableBulletNums_) {
+			suitablenum->Draw(viewProjection);
+	  }
 	 }
 	
-
 	 // 弾描画
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
@@ -253,7 +258,7 @@ void Enemy::SecondAttack() {
 	        SuitableBullet* newSuitableBullet = new SuitableBullet();
 		  // 複数弾の更新
 	        newSuitableBullet->Initialize(
-	            SuitableModel, worldTransformHead_.translation_, velocity);
+	            SuitableModel, worldTransformBase_.translation_, velocity);
 				// 複数弾の登録
 			   suitableBulletNums_.push_back(newSuitableBullet);
 				//タイマー初期化
@@ -281,7 +286,7 @@ void Enemy::Fire() {
 
 	            // 弾を発生し、初期化
 	            EnemyBullet* newBullet = new EnemyBullet();
-	            newBullet->Initialize(bulletModel_, worldTransformHead_.translation_, velocity);
+	            newBullet->Initialize(bulletModel_, worldTransformBase_.translation_, velocity);
 	            // 弾を登録
 	            bullets_.push_back(newBullet);
 }
@@ -308,6 +313,8 @@ void Enemy::OnCollision() {
 	isDead_ = true;
 
 	// isDelete_ = true;
+	
+	Hp -= 1;
 
 	isfall_ = true;
 }
