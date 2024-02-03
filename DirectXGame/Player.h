@@ -64,6 +64,9 @@ private:
 	// プレイヤーから敵に向かう差分ベクトル
 	Vector3 DiffVector = {0, 0, 0};
 
+	// デスフラグ
+	bool isDead_ = false;
+
 public:
 	// 親子関係を結ぶ
 	void SetParent(const WorldTransform* parent) { worldTransformHead_.parent_ = parent; };

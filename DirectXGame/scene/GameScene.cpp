@@ -306,7 +306,9 @@ void GameScene::CheckAllCollision() {
 	Vector3 posA, posB;
 
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
 
+#pragma region 自弾と敵の当たり判定
 	posA = enemy_->GetWorldPosition();
 
 	for (PlayerBullet* bullet : playerBullets) {
@@ -334,5 +336,32 @@ void GameScene::CheckAllCollision() {
 
 			EnemyLife--;
 		}
+	}
+#pragma endregion
+
+#pragma region 敵弾とプレイヤーの当たり判定
+
+	posA = player_->GetWorldPosition();
+
+	for (EnemyBullet* bullet : enemyBullets) {
+		posB = bullet->GetWorldPosition();
+
+		float X = (posB.x - posA.x);
+		float Y = (posB.y - posA.y);
+		float Z = (posB.z - posA.z);
+
+		float center = sqrtf(X * X + Y * Y + Z * Z);
+		float R1 = 1.5f; // 自分で決める
+		float R2 = 0.5f; // 自分で決める
+		float RR = (R1 + R2);
+
+		if (center <= (RR * RR)) {
+			// 敵キャラの衝突時コールバックを呼び出す
+			player_->OnCollision();
+			// 自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+
+#pragma endregion
 	}
 }

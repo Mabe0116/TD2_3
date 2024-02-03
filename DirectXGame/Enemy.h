@@ -50,6 +50,9 @@ public:
 
 	void SetVelocity(const Vector3& velocity);
 
+	// 弾リストを取得
+	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+
 private:
 	//行動フェーズ
 	enum class Phase {
