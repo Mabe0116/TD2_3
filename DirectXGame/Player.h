@@ -67,7 +67,15 @@ private:
 	// デスフラグ
 	bool isDead_ = false;
 
+	// プレイヤー落下
+	bool isfall_ = false;
+
+	float fallcount = 0;
+
 public:
+
 	// 親子関係を結ぶ
-	void SetParent(const WorldTransform* parent) { worldTransformHead_.parent_ = parent; };
+	void SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; };
+
+	void Reset();
 };

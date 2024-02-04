@@ -46,12 +46,16 @@ public:
 	// 弾の出るタイミング
 	static const int SuitableInterval = 20;
 
-	float Hp = 4.0f;
-
 	void SetVelocity(const Vector3& velocity);
 
 	// 弾リストを取得
 	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+
+	bool GetIsDefeat() { return isDefeat_; }
+
+	bool GetIsThrown() { return isThrown_[3]; }
+
+	void Reset();
 
 private:
 	//行動フェーズ
@@ -122,4 +126,7 @@ private:
 	bool isThrown_[4]{};
 	//飛ばされる速度ベクトル
 	Vector3 velocity_[4]{};
+
+	//敵を倒したかどうか判別するフラグ
+	bool isDefeat_ = false;
 };

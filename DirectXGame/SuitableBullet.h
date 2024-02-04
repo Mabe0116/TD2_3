@@ -9,7 +9,16 @@ public:
 	void Draw(ViewProjection& viewProjection);
 	bool IsDead() const { return isDead_; }
 
+	// 衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
+	Vector3 GetWorldPosition();
+
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	const Vector3& GetVelocity() const { return velocity_; };
+
+	void SetIsDead(bool IsDead) { isDead_ = IsDead; }
 
 	private:
 	WorldTransform worldTransform_;
@@ -22,5 +31,4 @@ public:
 	bool isDead_ = false;
 	// 速度
 	Vector3 velocity_ = {0.1f, 0, 0.1f};
-	;
 };

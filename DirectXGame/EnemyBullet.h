@@ -12,7 +12,11 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	const Vector3& GetVelocity() const { return velocity_; };
+
 	void OnCollision();
+
+	void SetIsDead(bool IsDead) { isDead_ = IsDead; }
 
 private:
 	WorldTransform worldTransform_;

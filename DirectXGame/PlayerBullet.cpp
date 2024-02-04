@@ -41,8 +41,7 @@ void PlayerBullet::Draw(const ViewProjection& viewProjection) {
 }
 
 void PlayerBullet::OnCollision() { 
-	isDead_ = true; 
-
+	isDead_ = true;
 }
 
 Vector3 PlayerBullet::GetWorldPosition() {

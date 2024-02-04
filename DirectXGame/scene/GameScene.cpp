@@ -36,16 +36,19 @@ void GameScene::Initialize() {
 	TitleTexture_ = TextureManager::Load("scene/title.png");
 	OperationTexture_ = TextureManager::Load("scene/operation.png");
 	ClearTexture_ = TextureManager::Load("scene/clear.png");
+	GameOverTexture_ = TextureManager::Load("scene/gameover.png");
 
 	FadeFakeSprite = std::make_unique<Sprite>();
 	TitleSprite_ = std::make_unique<Sprite>();
 	//OperationSprite_ = std::make_unique<Sprite>();
 	ClearSprite_ = std::make_unique<Sprite>();
+	GameOverSprite_ = std::make_unique<Sprite>();
 
 	FadeFakeSprite.reset(Sprite::Create(FadeFake_, {0, 0}));
 	TitleSprite_.reset(Sprite::Create(TitleTexture_, {0, 0}));
 	//OperationSprite_.reset(Sprite::Create(OperationTexture_, {0, 0}));
 	ClearSprite_.reset(Sprite::Create(ClearTexture_, {0, 0}));
+	GameOverSprite_.reset(Sprite::Create(GameOverTexture_, {0, 0}));
 
 
 	//サウンド読み込み
@@ -137,7 +140,6 @@ void GameScene::Update() {
 	// フェード更新
 	//fadeColor_.w += 0.005f;
 	//fadeSprite_->SetColor(fadeColor_);
-	
 
 	switch (scene) {
 	case GameScene::TITLE: // タイトルシーン
@@ -200,6 +202,37 @@ void GameScene::Update() {
 		// 敵キャラの更新
 		enemy_->Update();
 
+		// 敵を倒したときにプレイヤーの弾を撃てなくする処理
+		if (enemy_->GetIsThrown() == true) {
+			const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+			for (PlayerBullet* bullet : playerBullets) {
+				bullet->SetIsDead(ResetBullet);
+			}
+		}
+
+		if (enemy_->GetIsDefeat() == true) {
+			ClearTimer_++;
+		}
+
+		if (ClearTimer_ > 100) {
+			scene = CLEAR;
+
+				const std::list<SuitableBullet*>& suitableBullets = enemy_->GetSuitableBullet();
+			for (SuitableBullet* bullet : suitableBullets) {
+				bullet->SetIsDead(ResetEnemyBullet);
+			}
+
+			const std::list<EnemyBullet*>& Bullets = enemy_->GetBullets();
+			for (EnemyBullet* bullet : Bullets) {
+				bullet->SetIsDead(ResetEnemyBullet);
+			}
+
+		}
+
+		if (player_->GetWorldPosition().y <= -2.8f) {
+			scene = GAMEOVER;
+		}
+
 		skydome_->Update();
 
 		// デバッグカメラの更新
@@ -225,6 +258,48 @@ void GameScene::Update() {
 			viewProjection_.matView = followCamera_->GetViewProjection().matView;
 			viewProjection_.TransferMatrix();
 		};
+
+		break;
+
+	case GameScene::CLEAR: // クリアシーン
+
+		player_->Reset();
+		enemy_->Reset();
+		ClearTimer_ = 0;
+
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = TITLE;
+				}
+			}
+		}
+		break;
+
+	case GameScene::GAMEOVER: // ゲームオーバーシーン
+		player_->Reset();
+		enemy_->Reset();
+		ClearTimer_ = 0;
+
+		const std::list<SuitableBullet*>& suitableBullets = enemy_->GetSuitableBullet();
+		for (SuitableBullet* bullet : suitableBullets) {
+			bullet->SetIsDead(ResetEnemyBullet);
+		}
+
+		const std::list<EnemyBullet*>& Bullets = enemy_->GetBullets();
+		for (EnemyBullet* bullet : Bullets) {
+			bullet->SetIsDead(ResetEnemyBullet);
+		}
+
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			if (Input::GetInstance()->GetJoystickStatePrevious(0, prevjoyState)) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A &&
+				    !(prevjoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+					scene = TITLE;
+				}
+			}
+		}
 		break;
 	}
 	CheckAllCollision();
@@ -255,6 +330,9 @@ void GameScene::Draw() {
 	}
 	if (scene == CLEAR) {
 		ClearSprite_->Draw();
+	}
+	if (scene == GAMEOVER) {
+		GameOverSprite_->Draw();
 	}
 
 	// スプライト描画後処理
@@ -307,6 +385,7 @@ void GameScene::CheckAllCollision() {
 
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+	const std::list<SuitableBullet*>& SuitableBullets = enemy_->GetSuitableBullet();
 
 #pragma region 自弾と敵の当たり判定
 	posA = enemy_->GetWorldPosition();
@@ -331,13 +410,11 @@ void GameScene::CheckAllCollision() {
 			// 自弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
 
-			ImGui::Begin("a");
-			ImGui::End();
-
 			EnemyLife--;
 		}
 	}
 #pragma endregion
+
 
 #pragma region 敵弾とプレイヤーの当たり判定
 
@@ -361,7 +438,32 @@ void GameScene::CheckAllCollision() {
 			// 自弾の衝突時コールバックを呼び出す
 			bullet->OnCollision();
 		}
-
-#pragma endregion
 	}
+#pragma endregion
+
+#pragma region SuitableBulletとプレイヤーの当たり判定
+
+	posA = player_->GetWorldPosition();
+
+	for (SuitableBullet* bullet : SuitableBullets) {
+		posB = bullet->GetWorldPosition();
+
+		float X = (posB.x - posA.x);
+		float Y = (posB.y - posA.y);
+		float Z = (posB.z - posA.z);
+
+		float center = sqrtf(X * X + Y * Y + Z * Z);
+		float R1 = 1.0f; // 自分で決める
+		float R2 = 1.0f; // 自分で決める
+		float RR = (R1 + R2);
+
+		if (center <= (RR * RR)) {
+			// 敵キャラの衝突時コールバックを呼び出す
+			player_->OnCollision();
+			// 自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+		}
+	}
+#pragma endregion
+
 }

@@ -17,6 +17,8 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
+	void SetIsDead(bool IsDead) { isDead_ = IsDead; }
+
 	Vector3 GetWorldPosition();
 
 	const Vector3& GetVelocity() const { return velocity_; };

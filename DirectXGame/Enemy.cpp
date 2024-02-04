@@ -86,92 +86,96 @@ void Enemy::Update() {
 		return false;
 	});
 
-	switch (phase_) {
-	case Phase::First:
-		// 攻撃無し
-		worldTransformBase_.translation_.y = 2;
+	if (isThrown_[3] == false) {
 
-		if (isfall_ == true) {
-			phase_ = Phase::Second;
-		}
+		switch (phase_) {
+		case Phase::First:
+			// 攻撃無し
+			worldTransformBase_.translation_.y = 2;
 
-		break;
-	case Phase::Second:
-		// 敵の高さ変える
-		// worldTransformBase_.translation_.y = -2;
-		// 複数の弾のみ
-		//  複数弾の回転
-		worldTransformSuitable_.rotation_.y += RotateSpeed;
-		// 複数弾のタイマー
-		SuitableTiming--;
-		if (SuitableTiming <= 0) {
-			SecondAttack();
-		}
-		for (SuitableBullet* suitablenum : suitableBulletNums_) {
-			// 複数弾の更新
-			suitablenum->Update();
-		}
-		if (isfall_ == true && fallcount == 0) {
-			phase_ = Phase::Third;
-		}
+			if (isfall_ == true) {
+				phase_ = Phase::Second;
+			}
 
-		break;
-	case Phase::Third:
-		// 敵の高さ変える
-		// worldTransformBase_.translation_.y = -5;
-		// 追尾弾のみ
-		// 弾更新
-		for (EnemyBullet* bullet : bullets_) {
-			bullet->Update();
-		}
-		// 発射タイマーカウントダウン
-		--fireTimer_;
-		// 指定時間に達したら
-		if (fireTimer_ <= 0) {
-			// 弾を発射
-			Fire();
-			// 発射タイマーを初期化
-			fireTimer_ = kFireInterval;
-		}
+			break;
+		case Phase::Second:
+			// 敵の高さ変える
+			// worldTransformBase_.translation_.y = -2;
+			// 複数の弾のみ
+			//  複数弾の回転
+			worldTransformSuitable_.rotation_.y += RotateSpeed;
+			// 複数弾のタイマー
+			SuitableTiming--;
+			if (SuitableTiming <= 0) {
+				SecondAttack();
+			}
+			for (SuitableBullet* suitablenum : suitableBulletNums_) {
+				// 複数弾の更新
+				suitablenum->Update();
+			}
+			if (isfall_ == true && fallcount == 0) {
+				phase_ = Phase::Third;
+			}
 
-		if (isfall_ == true && fallcount == 0) {
-			phase_ = Phase::Final;
-		}
+			break;
+		case Phase::Third:
+			// 敵の高さ変える
+			// worldTransformBase_.translation_.y = -5;
+			// 追尾弾のみ
+			// 弾更新
+			for (EnemyBullet* bullet : bullets_) {
+				bullet->Update();
+			}
+			// 発射タイマーカウントダウン
+			--fireTimer_;
+			// 指定時間に達したら
+			if (fireTimer_ <= 0) {
+				// 弾を発射
+				Fire();
+				// 発射タイマーを初期化
+				fireTimer_ = kFireInterval;
+			}
 
-		break;
-	case Phase::Final:
-		// 敵の高さ変える
-		// worldTransformBase_.translation_.y =-9;
-		// 複数弾の攻撃
-		// 複数弾の回転
-		worldTransformSuitable_.rotation_.y += RotateSpeed;
-		// 複数弾のタイマー
-		SuitableTiming--;
-		if (SuitableTiming <= 0) {
-			SecondAttack();
-		}
-		for (SuitableBullet* suitablenum : suitableBulletNums_) {
-			// 複数弾の更新
-			suitablenum->Update();
-		}
+			if (isfall_ == true && fallcount == 0) {
+				phase_ = Phase::Final;
+			}
 
-		// 追尾弾の攻撃
-		//  弾更新
-		for (EnemyBullet* bullet : bullets_) {
-			bullet->Update();
-		}
-		// 発射タイマーカウントダウン
-		--fireTimer_;
-		// 指定時間に達したら
-		if (fireTimer_ <= 0) {
-			// 弾を発射
-			Fire();
-			// 発射タイマーを初期化
-			fireTimer_ = kFireInterval;
-		}
+			break;
+		case Phase::Final:
+			// 敵の高さ変える
+			// worldTransformBase_.translation_.y =-9;
+			// 複数弾の攻撃
+			// 複数弾の回転
+			worldTransformSuitable_.rotation_.y += RotateSpeed;
+			// 複数弾のタイマー
+			SuitableTiming--;
+			if (SuitableTiming <= 0) {
+				SecondAttack();
+			}
+			for (SuitableBullet* suitablenum : suitableBulletNums_) {
+				// 複数弾の更新
+				suitablenum->Update();
+			}
 
-		break;
+			// 追尾弾の攻撃
+			//  弾更新
+			for (EnemyBullet* bullet : bullets_) {
+				bullet->Update();
+			}
+			// 発射タイマーカウントダウン
+			--fireTimer_;
+			// 指定時間に達したら
+			if (fireTimer_ <= 0) {
+				// 弾を発射
+				Fire();
+				// 発射タイマーを初期化
+				fireTimer_ = kFireInterval;
+			}
+
+			break;
+		}
 	}
+
 	ImGui::Begin("window");
 	ImGui::DragFloat("enemy", &worldTransformBase_.translation_.y);
 	ImGui::End();
@@ -243,6 +247,7 @@ void Enemy::Update() {
 	if (isThrown_[3]) {
 		//worldTransformHead_.parent_ = nullptr;
 		Move(worldTransformHead_.translation_, velocity_[3]);
+		isDefeat_ = true;
 	}
 
 	worldTransformBase_.UpdateMatrix();
@@ -262,16 +267,20 @@ void Enemy::Draw(ViewProjection& viewProjection) {
 	bodyModel2_->Draw(worldTransformBody2_, viewProjection);
 
 	bodyModel3_->Draw(worldTransformBody3_, viewProjection);
-	if (phase_ == Phase::Second || phase_ == Phase::Final) {
-		// 複数弾の描画複数
-		for (SuitableBullet* suitablenum : suitableBulletNums_) {
-			suitablenum->Draw(viewProjection);
-		}
-	}
 
-	// 弾描画
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
+	if (isThrown_[3] == false) {
+
+		if (phase_ == Phase::Second || phase_ == Phase::Final) {
+			// 複数弾の描画複数
+			for (SuitableBullet* suitablenum : suitableBulletNums_) {
+				suitablenum->Draw(viewProjection);
+			}
+		}
+
+		// 弾描画
+		for (EnemyBullet* bullet : bullets_) {
+			bullet->Draw(viewProjection);
+		}
 	}
 }
 
@@ -337,8 +346,6 @@ void Enemy::OnCollision() {
 
 	// isDelete_ = true;
 
-	Hp -= 1;
-
 	isfall_ = true;
 
 	for (int i = 0; i < 4; i++) {
@@ -357,4 +364,19 @@ void Enemy::SetVelocity(const Vector3& velocity) {
 			break;
 		}
 	}
+}
+
+void Enemy::Reset() {
+	worldTransformHead_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformBody1_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformBody2_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransformBody3_.translation_ = {0.0f, 0.0f, 0.0f};
+
+	for (int i = 0; i < 4; i++) {
+		isThrown_[i] = false;
+	}
+
+	isDefeat_=false;
+
+	phase_ = Phase::First;
 }

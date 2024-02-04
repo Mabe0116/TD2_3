@@ -36,11 +36,20 @@ void Player::Initialize(Model* head, Model* body1, Model* body2, Model* body3,Mo
 	worldTransformBody2_.scale_ = {0.5f, 0.5f, 0.5f};
 	worldTransformBody3_.scale_ = {0.5f, 0.5f, 0.5f};
 
+	worldTransform_.Initialize();
 	worldTransformHead_.Initialize();
 	worldTransformBody1_.Initialize();
 	worldTransformBody2_.Initialize();
 	worldTransformBody3_.Initialize();
-	worldTransform_.Initialize();
+
+	//worldTransformHead_.parent_ = &worldTransform_;
+	//// ボディ1の親をヘッドにする
+	//worldTransformBody1_.parent_ = &worldTransform_;
+	//// ボディ2の親をヘッドにする
+	//worldTransformBody2_.parent_ = &worldTransform_;
+	//// ボディ3の親をヘッドにする
+	//worldTransformBody3_.parent_ = &worldTransform_;
+
 }
 
 void Player::Update() {
@@ -85,11 +94,19 @@ void Player::Update() {
 		worldTransformBody3_.translation_.z = add_z;
 	}
 
-	worldTransformHead_.UpdateMatrix();
-	worldTransformBody1_.UpdateMatrix();
-	worldTransformBody2_.UpdateMatrix();
-	worldTransformBody3_.UpdateMatrix();
-	worldTransform_.UpdateMatrix();
+	if (isfall_ == true) {
+		fallcount += 0.1f;
+
+		worldTransformHead_.translation_.y -= 0.1f;
+		worldTransformBody1_.translation_.y -= 0.1f;
+		worldTransformBody2_.translation_.y -= 0.1f;
+		worldTransformBody3_.translation_.y -= 0.1f;
+
+		if (fallcount >= 1.3f) {
+			isfall_ = false;
+			fallcount = 0;
+		}
+	}
 
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -108,12 +125,12 @@ void Player::Update() {
 		bullet->Update();
 	}
 
-	ImGui::Begin("window");
-	ImGui::DragFloat3("player head", &worldTransformHead_.translation_.x);
-	ImGui::DragFloat3("player body1", &worldTransformBody1_.translation_.x);
-	ImGui::DragFloat3("player body2", &worldTransformBody2_.translation_.x);
-	ImGui::DragFloat3("player body3", &worldTransformBody3_.translation_.x);
-	ImGui::DragFloat("angle", &angle);
+	ImGui::Begin("playerWindow");
+	ImGui::DragFloat3("basePos", &worldTransform_.translation_.x);
+	ImGui::DragFloat3("HeadPos", &worldTransformHead_.matWorld_.m[3][0]);
+	ImGui::DragFloat3("Body1Pos", &worldTransformBody1_.translation_.x);
+	ImGui::DragFloat3("Body2Pos", &worldTransformBody2_.translation_.x);
+	ImGui::DragFloat3("Body3Pos", &worldTransformBody3_.translation_.x);
 	ImGui::End();
 }
 
@@ -127,6 +144,12 @@ void Player::Draw(ViewProjection& viewProjection) {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
+
+	worldTransform_.UpdateMatrix();
+	worldTransformHead_.UpdateMatrix();
+	worldTransformBody1_.UpdateMatrix();
+	worldTransformBody2_.UpdateMatrix();
+	worldTransformBody3_.UpdateMatrix();
 }
 
 void Player::Attack() {
@@ -160,19 +183,21 @@ void Player::Attack() {
 	}
 }
 
-void Player::OnCollision() { isDead_ = true; }
+void Player::OnCollision() { 
+	isDead_ = true; 
+
+	isfall_ = true;
+}
 
 Vector3 Player::GetWorldPosition() {
 	// ワールド座標を入れる変数
 	Vector3 worldPos;
 	// ワールド行列の平行移動成分を取得(ワールド座標)
-	worldPos.x = worldTransformBody1_.matWorld_.m[3][0];
-	worldPos.y = worldTransformBody1_.matWorld_.m[3][1];
-	worldPos.z = worldTransformBody1_.matWorld_.m[3][2];
+	worldPos.x = worldTransformHead_.matWorld_.m[3][0];
+	worldPos.y = worldTransformHead_.matWorld_.m[3][1];
+	worldPos.z = worldTransformHead_.matWorld_.m[3][2];
 
 	return worldPos;
-
-	// return Vector3();
 }
 
 Vector3 Player::GetWorldRotationPos() { 
@@ -183,4 +208,13 @@ Vector3 Player::GetWorldRotationPos() {
 	worldRotationPos.z = worldTransformHead_.rotation_.z;
 
 	return worldRotationPos;
+}
+
+void Player::Reset() {
+	worldTransformHead_.translation_ = {0, 1.0f, 0};
+	worldTransformBody1_.translation_ = {0, 1.0f, 0};
+	worldTransformBody2_.translation_ = {0, 1.0f, 0};
+	worldTransformBody3_.translation_ = {0, 1.0f, 0};
+
+	isfall_ = false;
 }

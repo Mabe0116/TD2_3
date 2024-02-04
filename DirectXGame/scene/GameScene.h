@@ -110,7 +110,8 @@ private: // メンバ変数
 		TITLE,
 		OPERATION,
 		GAME,
-		CLEAR
+		CLEAR,
+		GAMEOVER
 	};
 
 	Scene scene = TITLE;
@@ -123,6 +124,7 @@ private: // メンバ変数
 	uint32_t TitleTexture_ = 0;
 	uint32_t OperationTexture_ = 0;
 	uint32_t ClearTexture_ = 0;
+	uint32_t GameOverTexture_ = 0;
 
 	Sprite* fadeTitleSprite = nullptr;
 	Vector4 fadeTitleColor_ = {1.0f, 1.0f, 1.0f, 0.0f};
@@ -135,6 +137,7 @@ private: // メンバ変数
 	std::unique_ptr<Sprite> TitleSprite_ = nullptr;
 	//std::unique_ptr<Sprite> OperationSprite_ = nullptr;
 	std::unique_ptr<Sprite> ClearSprite_ = nullptr;
+	std::unique_ptr<Sprite> GameOverSprite_ = nullptr;
 
 	//ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
@@ -154,7 +157,8 @@ private: // メンバ変数
 
 	uint32_t voiceHandle_ = 0;
 
-
+	//　クリア画面にいくタイマー
+	int ClearTimer_ = 0;
 	
 	// 速度
 	Vector3 velocity_;
@@ -162,6 +166,11 @@ private: // メンバ変数
 	//フェード
 	/*Sprite* fadeSprite_ = nullptr;
 	Vector4 fadeColor_ = {1.0f, 1.0f, 1.0f, 0.0f};*/
+
+	
+	// リセットで弾を消す変数
+	bool ResetBullet = true;
+	bool ResetEnemyBullet = true;
 
 	/// <summary>
 	/// ゲームシーン用
