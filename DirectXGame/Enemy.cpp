@@ -69,14 +69,6 @@ void Enemy::Initialize(
 
 void Enemy::Update() {
 
-	ImGui::Begin("enemyWindow");
-	ImGui::DragFloat3("basePos", &worldTransformBase_.translation_.x);
-	ImGui::DragFloat3("HeadPos", &worldTransformHead_.translation_.x);
-	ImGui::DragFloat3("Body1Pos", &worldTransformBody1_.translation_.x);
-	ImGui::DragFloat3("Body2Pos", &worldTransformBody2_.translation_.x);
-	ImGui::DragFloat3("Body3Pos", &worldTransformBody3_.translation_.x);
-	ImGui::End();
-
 	// デスフラグの立った弾を削除
 	bullets_.remove_if([](EnemyBullet* bullet) {
 		if (bullet->IsDead()) {
@@ -176,10 +168,6 @@ void Enemy::Update() {
 		}
 	}
 
-	ImGui::Begin("window");
-	ImGui::DragFloat("enemy", &worldTransformBase_.translation_.y);
-	ImGui::End();
-
 	// デスフラグの経った敵の削除
 	suitableBulletNums_.remove_if([](SuitableBullet* enemynum) {
 		if (enemynum->IsDead()) {
@@ -214,11 +202,6 @@ void Enemy::Update() {
 			fallcount = 0;
 		}
 	}
-
-	ImGui::Begin("count");
-	ImGui::DragFloat("a", &fallcount);
-	ImGui::DragFloat3("Velocity", &velocity_[0].x);
-	ImGui::End();
 
 	if (isDelete_ == true) {
 		/*const float kAcceleration = -0.02f;

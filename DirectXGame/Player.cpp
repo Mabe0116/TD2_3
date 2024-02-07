@@ -124,14 +124,6 @@ void Player::Update() {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
-
-	ImGui::Begin("playerWindow");
-	ImGui::DragFloat3("basePos", &worldTransform_.translation_.x);
-	ImGui::DragFloat3("HeadPos", &worldTransformHead_.matWorld_.m[3][0]);
-	ImGui::DragFloat3("Body1Pos", &worldTransformBody1_.translation_.x);
-	ImGui::DragFloat3("Body2Pos", &worldTransformBody2_.translation_.x);
-	ImGui::DragFloat3("Body3Pos", &worldTransformBody3_.translation_.x);
-	ImGui::End();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
