@@ -149,7 +149,7 @@ void Player::Attack() {
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 			if (--BulletTimer < 0) {
-				BulletTimer = 30;
+				BulletTimer = 120;
 
 				//// 弾の速度
 				const float kBulletSpeed = 1.0f;
